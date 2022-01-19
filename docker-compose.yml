@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+
+  # golang api
+  api:
+    container_name: api
+    depends_on:
+      - db
+    restart: always
+    build: 
+      context: .
+      dockerfile: ./docker/golang/Dockerfile
+    env_file:
+      - .env
+    ports:
+      - 8080:8080
+    tty: true
+    volumes:
+      - ./:/go/src/github.com/D-Undefined/hack-camp_vol13_server
+    command: "air"
+
+
+  # postgres db
+  db:
+    image: postgres:13.0
+    container_name: db
+    volumes:
+      - ./postgres/db:/var/lib/postgresql/data
+    restart: always
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+
+
+
+
+
+
+
