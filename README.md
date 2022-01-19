@@ -1,6 +1,9 @@
 # hack-camp_vol13_server
 
 
+### ER
+![ER](./img/ER.png)
+
 
 ## Getting Started
 docker start  
@@ -20,3 +23,5 @@ psql -U <USER_NAME> <DB_NAME>
 ```
 \q 
 ```  
+
+
