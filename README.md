@@ -2,6 +2,8 @@
 
 
 
+
+
 ## Getting Started
 docker start  
 
@@ -9,14 +11,12 @@ docker start
 docker compose up
 ```
 
-### postgresql connect 
 
-ユーザーを指定し接続  
-```
-psql -U <USER_NAME> <DB_NAME> 
-```  
+### ER
+![ER](./img/ER.png)
 
-データベースから出る  
-```
-\q 
-```  
+
+
+
+
+
