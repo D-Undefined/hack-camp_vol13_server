@@ -14,9 +14,11 @@ func main() {
 
 	// repository
 	uR := persistance.NewUserRepository(*sh)
+	tR := persistance.NewThreadRepository(*sh)
 
 	// handler
 	uH := handler.NewUserHandler(uR)
+	tH := handler.NewThreadHandler(tR)
 
 	// server 準備
 	server := gin.Default()
@@ -26,9 +28,20 @@ func main() {
 
 	// api var.1
 	v1 := server.Group("/api/v1")
+
+	// user
 	v1.GET("/users", uH.FindAllUser)
-	v1.POST("/user", uH.CreateUser)
 	v1.GET("/user/:uid", uH.FindUserById)
+	v1.POST("/user", uH.CreateUser)
+	
+
+	// threads
+	v1.GET("/threads",tH.FindAllThread)
+	v1.GET("/thread/:id",tH.FindThreadById)
+	v1.POST("/thread",tH.CreateThread)
+	v1.PUT("/thread/:id",tH.UpdateThread)
+	v1.DELETE("/thread/:id",tH.DeleteThread)
+
 
 	server.Run(":8080")
 }
