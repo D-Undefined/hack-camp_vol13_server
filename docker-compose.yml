@@ -20,7 +20,6 @@ services:
       - ./:/go/src/github.com/D-Undefined/hack-camp_vol13_server
     command: "air"
 
-
   # postgres db
   db:
     image: postgres:13.0
@@ -32,10 +31,3 @@ services:
       - 5432:5432
     env_file:
       - .env
-
-
-
-
-
-
-
