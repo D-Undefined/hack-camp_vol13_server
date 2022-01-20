@@ -13,17 +13,6 @@ func NewUserRepository(sh SqlHandler) repository.UserRepository {
 	return &userRepository{sh: sh}
 }
 
-// すべてのuserを返す
-func (uR *userRepository) FindAllUser() ([]*model.User, error) {
-	db := uR.sh.db
-	users := []*model.User{}
-	err := db.Find(&users).Error
-	if err != nil {
-		return nil, err
-	}
-	return users, nil
-}
-
 
 
 // user作成
@@ -44,4 +33,16 @@ func (uR *userRepository) FindUserById(uid string) (*model.User, error) {
 		return nil, err
 	}
 	return user, err
+}
+
+
+// すべてのuserを返す
+func (uR *userRepository) FindAllUser() ([]*model.User, error) {
+	db := uR.sh.db
+	users := []*model.User{}
+	err := db.Find(&users).Error
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
 }

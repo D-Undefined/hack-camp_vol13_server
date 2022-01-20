@@ -25,17 +25,6 @@ func NewUserHandler(uR repository.UserRepository) UserHandler {
 }
 
 
-// すべてのuserを返す
-func (uH *userHandler) FindAllUser(ctx *gin.Context) {
-	users, err := uH.uR.FindAllUser()
-
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
-		return
-	}
-	ctx.JSON(http.StatusOK, users)
-}
-
 
 // user作成
 func (uH *userHandler) CreateUser(ctx *gin.Context) {
@@ -50,7 +39,7 @@ func (uH *userHandler) CreateUser(ctx *gin.Context) {
 		Follow:   0,
 		Follower: 0,
 	}
-	if err := ctx.BindJSON(user); err != nil {
+	if err := ctx.Bind(user); err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}
@@ -74,4 +63,16 @@ func (uH *userHandler) FindUserById(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, user)
 
+}
+
+
+// すべてのuserを返す
+func (uH *userHandler) FindAllUser(ctx *gin.Context) {
+	users, err := uH.uR.FindAllUser()
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, users)
 }
