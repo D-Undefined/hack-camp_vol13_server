@@ -26,13 +26,18 @@ func (uR *userRepository) CreateUser(user *model.User) error {
 // uid で userを検索
 func (uR *userRepository) FindUserById(uid string) (*model.User, error) {
 	db := uR.sh.db
-	user := &model.User{Uid: uid}
-	err := db.Find(user).Error
 
-	if err != nil {
+	user := &model.User{Id: uid}
+	if err := db.Find(user).Error;err != nil {
 		return nil, err
 	}
-	return user, err
+
+	threads := []*model.Thread{}
+	if err := db.Find(&threads).Error; err != nil {
+		return nil, err
+	}
+	user.Threads = threads
+	return user, nil
 }
 
 
@@ -40,7 +45,7 @@ func (uR *userRepository) FindUserById(uid string) (*model.User, error) {
 func (uR *userRepository) FindAllUser() ([]*model.User, error) {
 	db := uR.sh.db
 	users := []*model.User{}
-	err := db.Find(&users).Error
+	err := db.Preload("Threads").Find(&users).Error
 	if err != nil {
 		return nil, err
 	}
