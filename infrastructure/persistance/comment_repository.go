@@ -1,6 +1,7 @@
 package persistance
 
 import (
+	"fmt"
 	"github.com/D-Undefined/hack-camp_vol13_server/domain/model"
 	"github.com/D-Undefined/hack-camp_vol13_server/usecase/repository"
 )
@@ -16,6 +17,10 @@ func NewCommentRepository(sh *SqlHandler) repository.CommentRepository {
 func (cR commentRepository) CreateComment(comment *model.Comment) error {
 	db := cR.sh.db
 
+	// uidがあるかどうか
+	if comment.UserID==""{
+		return fmt.Errorf("uid is empty")
+	}
 	//userが存在するか確認
 	if err := db.First(&model.User{Id: comment.UserID}).Error; err != nil {
 		return err

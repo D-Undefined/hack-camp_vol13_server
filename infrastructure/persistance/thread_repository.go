@@ -1,6 +1,7 @@
 package persistance
 
 import (
+	"fmt"
 	"github.com/D-Undefined/hack-camp_vol13_server/domain/model"
 	"github.com/D-Undefined/hack-camp_vol13_server/usecase/repository"
 )
@@ -17,7 +18,11 @@ func NewThreadRepository(sh *SqlHandler) repository.ThreadRepository {
 func (tR *threadRepository) CreateThread(thread *model.Thread) error {
 	db := tR.sh.db
 
-	//userが存在するか確認
+	// uidがあるかどうか
+	if thread.UserID==""{
+		return fmt.Errorf("uid is empty")
+	}
+	// userが存在するか確認
 	if err := db.First(&model.User{Id: thread.UserID}).Error; err != nil {
 		return err
 	}
