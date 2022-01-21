@@ -20,7 +20,7 @@ func (tR *threadRepository) CreateThread(thread *model.Thread) error {
 	db := tR.sh.db
 
 	// uidがあるかどうか
-	if thread.UserID==""{
+	if thread.UserID == "" {
 		return fmt.Errorf("uid is empty")
 	}
 	// userが存在するか確認

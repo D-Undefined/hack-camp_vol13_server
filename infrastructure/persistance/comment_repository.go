@@ -18,7 +18,7 @@ func (cR commentRepository) CreateComment(comment *model.Comment) error {
 	db := cR.sh.db
 
 	// uidがあるかどうか
-	if comment.UserID==""{
+	if comment.UserID == "" {
 		return fmt.Errorf("uid is empty")
 	}
 	//userが存在するか確認
@@ -27,14 +27,14 @@ func (cR commentRepository) CreateComment(comment *model.Comment) error {
 	}
 
 	//threadが存在するか確認
-	thread := &model.Thread{Id:comment.ThreadID}
+	thread := &model.Thread{Id: comment.ThreadID}
 	if err := db.First(thread).Error; err != nil {
 		return err
 	}
 
 	// commentCntを1増やす
-	thread.CommentCnt = thread.CommentCnt+1
-	if err:= db.Model(&model.Thread{Id:comment.ThreadID}).Update(thread).Error;err!=nil{
+	thread.CommentCnt = thread.CommentCnt + 1
+	if err := db.Model(&model.Thread{Id: comment.ThreadID}).Update(thread).Error; err != nil {
 		return err
 	}
 
@@ -45,14 +45,14 @@ func (cR commentRepository) DeleteComment(comment *model.Comment) error {
 	db := cR.sh.db
 
 	//threadが存在するか確認
-	thread := &model.Thread{Id:comment.ThreadID}
+	thread := &model.Thread{Id: comment.ThreadID}
 	if err := db.First(thread).Error; err != nil {
 		return err
 	}
 
 	// commentCntを1減らす
-	thread.CommentCnt = thread.CommentCnt-1
-	if err:= db.Model(&model.Thread{Id:comment.ThreadID}).Update(thread).Error;err!=nil{
+	thread.CommentCnt = thread.CommentCnt - 1
+	if err := db.Model(&model.Thread{Id: comment.ThreadID}).Update(thread).Error; err != nil {
 		return err
 	}
 

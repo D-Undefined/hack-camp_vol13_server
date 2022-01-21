@@ -20,7 +20,7 @@ func (uR *userRepository) CreateUser(user *model.User) error {
 	db := uR.sh.db
 
 	// uidがあるかどうか
-	if user.Id==""{
+	if user.Id == "" {
 		return fmt.Errorf("uid is empty")
 	}
 	//存在するか確認
@@ -53,8 +53,6 @@ func (uR *userRepository) UpdateUser(user *model.User) error {
 	return db.Model(&model.User{Id: user.Id}).Update(user).Error
 }
 
-
-
 // uid で userを検索
 func (uR *userRepository) FindUserById(uid string) (*model.User, error) {
 	db := uR.sh.db
@@ -66,8 +64,6 @@ func (uR *userRepository) FindUserById(uid string) (*model.User, error) {
 	}
 	return user, nil
 }
-
-
 
 // すべてのuserを返す
 func (uR *userRepository) FindAllUser() (*[]*model.User, error) {
@@ -84,22 +80,22 @@ func (uR *userRepository) FindAllUser() (*[]*model.User, error) {
 	}
 
 	/*
-	返り値の例
-	[
-		{
-			"uid": "a38ty89haeh",
-			"user_name": "hoge",...
-			"Threads": [
-				{
-					"id":1,....
-					"Comments":[{},{},{},...]
-				}
-			]
+		返り値の例
+		[
+			{
+				"uid": "a38ty89haeh",
+				"user_name": "hoge",...
+				"Threads": [
+					{
+						"id":1,....
+						"Comments":[{},{},{},...]
+					}
+				]
 
-		},
-		{},
-		{},...
-	]
+			},
+			{},
+			{},...
+		]
 	*/
 
 	err := db.Preload("Threads.Comments").Find(users).Error
