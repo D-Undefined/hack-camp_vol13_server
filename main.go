@@ -26,13 +26,17 @@ func main() {
 	// test server
 	server.GET("/", health)
 
+
 	// api var.1
 	v1 := server.Group("/api/v1")
+
 
 	// user
 	v1.GET("/users", uH.FindAllUser)
 	v1.GET("/user/:uid", uH.FindUserById)
 	v1.POST("/user", uH.CreateUser)
+	v1.PUT("/user/:uid", uH.UpdateUser)
+	v1.DELETE("/user/:uid", uH.DeleteUser)
 	
 
 	// threads

@@ -23,20 +23,39 @@ func (uR *userRepository) CreateUser(user *model.User) error {
 
 
 
+// user 削除
+func (uR *userRepository) DeleteUser(user *model.User) error {
+	db:=uR.sh.db
+	//存在するか確認
+	if err:=db.First(&model.User{Id:user.Id}).Error;err!=nil{
+		return err
+	}
+
+	return db.Delete(&user).Error
+}
+
+
+// user 更新
+func (uR *userRepository) UpdateUser(user *model.User) error {
+	db:=uR.sh.db
+	//存在するか確認
+	if err:=db.First(&model.User{Id:user.Id}).Error;err!=nil{
+		return err
+	}
+
+	return db.Model(&model.User{Id:user.Id}).Update(&user).Error
+}
+
+
 // uid で userを検索
 func (uR *userRepository) FindUserById(uid string) (*model.User, error) {
 	db := uR.sh.db
 
 	user := &model.User{Id: uid}
-	if err := db.Find(user).Error;err != nil {
+	err := db.Preload("Threads").First(user).Error
+	if err != nil {
 		return nil, err
 	}
-
-	threads := []*model.Thread{}
-	if err := db.Find(&threads).Error; err != nil {
-		return nil, err
-	}
-	user.Threads = threads
 	return user, nil
 }
 

@@ -22,13 +22,23 @@ func (tR threadRepository) CreateThread(thread *model.Thread) error {
 // Thread削除
 func (tR threadRepository) DeleteThread(thread *model.Thread)error{
 	db := tR.sh.db
+	//存在するか確認
+	if err:=db.First(&model.Thread{Id: thread.Id}).Error;err!=nil{
+		return err
+	}
+
 	return db.Delete(&thread).Error
 }
 
 // Thread更新
 func (tR threadRepository) UpdateThread(thread *model.Thread) error {
 	db := tR.sh.db
-	return db.Model(&model.Thread{Id:thread.Id}).Update(thread).Error
+	//存在するか確認
+	if err:=db.First(&model.Thread{Id: thread.Id}).Error;err!=nil{
+		return err
+	}
+
+	return db.Model(&model.Thread{Id:thread.Id}).Update(&thread).Error
 }
 
 
@@ -36,7 +46,7 @@ func (tR threadRepository) UpdateThread(thread *model.Thread) error {
 func (tR threadRepository) FindThreadById(id int) (*model.Thread,error){
 	db := tR.sh.db
 	thread := &model.Thread{Id:id}
-	err := db.Find(thread).Error
+	err := db.First(thread).Error
 	if err!=nil{
 		return nil,err
 	}
