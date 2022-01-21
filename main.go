@@ -52,6 +52,7 @@ func main() {
 	server.Run(":8080")
 }
 
+
 func health(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "ok",
