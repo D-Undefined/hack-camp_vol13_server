@@ -7,5 +7,5 @@ type UserRepository interface {
 	DeleteUser(*model.User) error
 	UpdateUser(*model.User) error
 	FindUserById(string) (*model.User, error)
-	FindAllUser() ([]*model.User, error)
+	FindAllUser() (*[]*model.User, error)
 }

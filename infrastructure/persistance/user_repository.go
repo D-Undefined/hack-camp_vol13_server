@@ -8,10 +8,10 @@ import (
 )
 
 type userRepository struct {
-	sh SqlHandler
+	sh *SqlHandler
 }
 
-func NewUserRepository(sh SqlHandler) repository.UserRepository {
+func NewUserRepository(sh *SqlHandler) repository.UserRepository {
 	return &userRepository{sh: sh}
 }
 
@@ -23,7 +23,7 @@ func (uR *userRepository) CreateUser(user *model.User) error {
 		return fmt.Errorf("this uid already exists")
 	}
 
-	return db.Save(&user).Error
+	return db.Save(user).Error
 }
 
 // user 削除
@@ -34,7 +34,7 @@ func (uR *userRepository) DeleteUser(user *model.User) error {
 		return err
 	}
 
-	return db.Delete(&user).Error
+	return db.Delete(user).Error
 }
 
 // user 更新
@@ -45,7 +45,7 @@ func (uR *userRepository) UpdateUser(user *model.User) error {
 		return err
 	}
 
-	return db.Model(&model.User{Id: user.Id}).Update(&user).Error
+	return db.Model(&model.User{Id: user.Id}).Update(user).Error
 }
 
 // uid で userを検索
@@ -61,10 +61,20 @@ func (uR *userRepository) FindUserById(uid string) (*model.User, error) {
 }
 
 // すべてのuserを返す
-func (uR *userRepository) FindAllUser() ([]*model.User, error) {
+func (uR *userRepository) FindAllUser() (*[]*model.User, error) {
 	db := uR.sh.db
-	users := []*model.User{}
-	err := db.Preload("Threads").Find(&users).Error
+
+	users := &[]*model.User{
+		{
+			Threads: []*model.Thread{
+				{
+					Comments: []*model.Comment{},
+				},
+			},
+		},
+	}
+
+	err := db.Preload("Threads.Comments").Find(users).Error
 	if err != nil {
 		return nil, err
 	}
