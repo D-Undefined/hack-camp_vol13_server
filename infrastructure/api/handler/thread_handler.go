@@ -27,7 +27,7 @@ func NewThreadHandler(tR repository.ThreadRepository) ThreadHandler {
 
 // Thread作成
 func (tH threadHandler) CreateThread(ctx *gin.Context) {
-	thread := &model.Thread{Vote: 0}
+	thread := &model.Thread{}
 
 	if err := ctx.Bind(thread); err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
