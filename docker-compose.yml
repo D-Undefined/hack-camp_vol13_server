@@ -27,6 +27,7 @@ services:
     volumes:
       - ./postgres/db:/var/lib/postgresql/data
     restart: always
+    tty: true
     ports:
       - 5432:5432
     env_file:
