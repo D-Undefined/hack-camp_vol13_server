@@ -24,7 +24,7 @@ func (uR *userRepository) CreateUser(user *model.User) error {
 		return fmt.Errorf("uid is empty")
 	}
 	//存在するか確認
-	if err := db.First(&model.User{Id: user.Id}).Error; err == nil {
+	if err:=db.First(&model.User{Id: user.Id}).Error;err == nil {
 		return fmt.Errorf("this uid already exists")
 	}
 

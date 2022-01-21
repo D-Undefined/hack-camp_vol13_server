@@ -16,11 +16,13 @@ func main() {
 	uR := persistance.NewUserRepository(sh)
 	tR := persistance.NewThreadRepository(sh)
 	cR := persistance.NewCommentRepository(sh)
+	cvR := persistance.NewVoteCommentRepository(sh)
 
 	// handler
 	uH := handler.NewUserHandler(uR)
 	tH := handler.NewThreadHandler(tR)
 	cH := handler.NewCommentHandler(cR)
+	cvH := handler.NewVoteCommentHandler(cvR)
 
 	// server 準備
 	server := gin.Default()
@@ -32,7 +34,7 @@ func main() {
 	v1 := server.Group("/api/v1")
 
 	// user
-	v1.GET("/users", uH.FindAllUser)
+	// v1.GET("/users", uH.FindAllUser)
 	v1.GET("/user/:uid", uH.FindUserById)
 	v1.POST("/user", uH.CreateUser)
 	v1.PUT("/user/:uid", uH.UpdateUser)
@@ -48,6 +50,10 @@ func main() {
 	// comment
 	v1.POST("/comment", cH.CreateComment)
 	v1.DELETE("/comment/:id", cH.DeleteComment)
+
+	// comment vote
+	v1.POST("/comment_vote", cvH.IncreaseCommentVote)
+	v1.DELETE("/comment_vote", cvH.RevokeCommentVote)
 
 	server.Run(":8080")
 }

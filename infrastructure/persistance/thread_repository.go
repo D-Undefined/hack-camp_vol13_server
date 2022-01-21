@@ -92,15 +92,3 @@ func (tR threadRepository) FindAllThread() (*[]*model.Thread, error) {
 	return threads, nil
 }
 
-// good に投票
-// func (tR threadRepository) VoteGood(id int)error{
-// 	db := tR.sh.db
-// 	thread := &model.Thread{Id:id}
-
-// 	if err:=db.First(thread).Error;err!=nil{
-// 		return err
-// 	}
-
-// 	thread.VoteGood = thread.VoteGood+1
-
-// }
