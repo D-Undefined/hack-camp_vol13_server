@@ -28,7 +28,6 @@ func (tR *threadRepository) CreateThread(thread *model.Thread) error {
 		return err
 	}
 
-
 	return db.Save(thread).Error
 }
 
@@ -71,7 +70,7 @@ func (tR *threadRepository) UpdateThread(thread *model.Thread) error {
 func (tR *threadRepository) FindThreadById(id int) (*model.Thread, error) {
 	db := tR.sh.db
 	thread := &model.Thread{
-		Id:id,
+		Id:       id,
 		Comments: []*model.Comment{},
 	}
 
@@ -93,7 +92,6 @@ func (tR threadRepository) FindAllThread() (*[]*model.Thread, error) {
 	return threads, nil
 }
 
-
 // good に投票
 // func (tR threadRepository) VoteGood(id int)error{
 // 	db := tR.sh.db
@@ -102,7 +100,7 @@ func (tR threadRepository) FindAllThread() (*[]*model.Thread, error) {
 // 	if err:=db.First(thread).Error;err!=nil{
 // 		return err
 // 	}
-	
+
 // 	thread.VoteGood = thread.VoteGood+1
 
 // }
