@@ -56,7 +56,6 @@ func (tH threadHandler) DeleteThread(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "ok"})
-
 }
 
 // Thread更新

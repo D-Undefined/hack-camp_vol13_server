@@ -14,7 +14,7 @@ func main() {
 
 	// repository
 	uR := persistance.NewUserRepository(sh)
-	tR := persistance.NewThreadRepository(*sh)
+	tR := persistance.NewThreadRepository(sh)
 	cR := persistance.NewCommentRepository(sh)
 
 	// handler

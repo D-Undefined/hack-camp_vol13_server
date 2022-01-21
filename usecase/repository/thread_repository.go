@@ -7,5 +7,5 @@ type ThreadRepository interface {
 	DeleteThread(*model.Thread) error
 	UpdateThread(*model.Thread) error
 	FindThreadById(int) (*model.Thread, error)
-	FindAllThread() ([]*model.Thread, error)
+	FindAllThread() (*[]*model.Thread, error)
 }
