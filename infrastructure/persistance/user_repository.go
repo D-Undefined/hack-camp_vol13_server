@@ -15,44 +15,38 @@ func NewUserRepository(sh SqlHandler) repository.UserRepository {
 	return &userRepository{sh: sh}
 }
 
-
-
 // user作成
 func (uR *userRepository) CreateUser(user *model.User) error {
 	db := uR.sh.db
 	//存在するか確認
-	if err:=db.First(&model.User{Id:user.Id}).Error;err==nil{
+	if err := db.First(&model.User{Id: user.Id}).Error; err == nil {
 		return fmt.Errorf("this uid already exists")
 	}
 
 	return db.Save(&user).Error
 }
 
-
-
 // user 削除
 func (uR *userRepository) DeleteUser(user *model.User) error {
-	db:=uR.sh.db
+	db := uR.sh.db
 	//存在するか確認
-	if err:=db.First(&model.User{Id:user.Id}).Error;err!=nil{
+	if err := db.First(&model.User{Id: user.Id}).Error; err != nil {
 		return err
 	}
 
 	return db.Delete(&user).Error
 }
 
-
 // user 更新
 func (uR *userRepository) UpdateUser(user *model.User) error {
-	db:=uR.sh.db
+	db := uR.sh.db
 	//存在するか確認
-	if err:=db.First(&model.User{Id:user.Id}).Error;err!=nil{
+	if err := db.First(&model.User{Id: user.Id}).Error; err != nil {
 		return err
 	}
 
-	return db.Model(&model.User{Id:user.Id}).Update(&user).Error
+	return db.Model(&model.User{Id: user.Id}).Update(&user).Error
 }
-
 
 // uid で userを検索
 func (uR *userRepository) FindUserById(uid string) (*model.User, error) {
@@ -65,7 +59,6 @@ func (uR *userRepository) FindUserById(uid string) (*model.User, error) {
 	}
 	return user, nil
 }
-
 
 // すべてのuserを返す
 func (uR *userRepository) FindAllUser() ([]*model.User, error) {

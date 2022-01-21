@@ -26,10 +26,8 @@ func main() {
 	// test server
 	server.GET("/", health)
 
-
 	// api var.1
 	v1 := server.Group("/api/v1")
-
 
 	// user
 	v1.GET("/users", uH.FindAllUser)
@@ -37,21 +35,16 @@ func main() {
 	v1.POST("/user", uH.CreateUser)
 	v1.PUT("/user/:uid", uH.UpdateUser)
 	v1.DELETE("/user/:uid", uH.DeleteUser)
-	
 
 	// threads
-	v1.GET("/threads",tH.FindAllThread)
-	v1.GET("/thread/:id",tH.FindThreadById)
-	v1.POST("/thread",tH.CreateThread)
-	v1.PUT("/thread/:id",tH.UpdateThread)
-	v1.DELETE("/thread/:id",tH.DeleteThread)
-
+	v1.GET("/threads", tH.FindAllThread)
+	v1.GET("/thread/:id", tH.FindThreadById)
+	v1.POST("/thread", tH.CreateThread)
+	v1.PUT("/thread/:id", tH.UpdateThread)
+	v1.DELETE("/thread/:id", tH.DeleteThread)
 
 	server.Run(":8080")
 }
-
-
-
 
 func health(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{

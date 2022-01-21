@@ -9,8 +9,8 @@ type threadRepository struct {
 	sh SqlHandler
 }
 
-func NewThreadRepository(sh SqlHandler) repository.ThreadRepository{
-	return &threadRepository{sh:sh}
+func NewThreadRepository(sh SqlHandler) repository.ThreadRepository {
+	return &threadRepository{sh: sh}
 }
 
 // Thread作成
@@ -18,7 +18,7 @@ func (tR threadRepository) CreateThread(thread *model.Thread) error {
 	db := tR.sh.db
 
 	//userが存在するか確認
-	if err:=db.First(&model.User{Id: thread.UserID}).Error;err!=nil{
+	if err := db.First(&model.User{Id: thread.UserID}).Error; err != nil {
 		return err
 	}
 
@@ -26,10 +26,10 @@ func (tR threadRepository) CreateThread(thread *model.Thread) error {
 }
 
 // Thread削除
-func (tR threadRepository) DeleteThread(thread *model.Thread)error{
+func (tR threadRepository) DeleteThread(thread *model.Thread) error {
 	db := tR.sh.db
 	//存在するか確認
-	if err:=db.First(&model.Thread{Id: thread.Id}).Error;err!=nil{
+	if err := db.First(&model.Thread{Id: thread.Id}).Error; err != nil {
 		return err
 	}
 
@@ -40,33 +40,31 @@ func (tR threadRepository) DeleteThread(thread *model.Thread)error{
 func (tR threadRepository) UpdateThread(thread *model.Thread) error {
 	db := tR.sh.db
 	//存在するか確認
-	if err:=db.First(&model.Thread{Id: thread.Id}).Error;err!=nil{
+	if err := db.First(&model.Thread{Id: thread.Id}).Error; err != nil {
 		return err
 	}
 
-	return db.Model(&model.Thread{Id:thread.Id}).Update(&thread).Error
+	return db.Model(&model.Thread{Id: thread.Id}).Update(&thread).Error
 }
-
 
 // IDで Threadを検索
-func (tR threadRepository) FindThreadById(id int) (*model.Thread,error){
+func (tR threadRepository) FindThreadById(id int) (*model.Thread, error) {
 	db := tR.sh.db
-	thread := &model.Thread{Id:id}
+	thread := &model.Thread{Id: id}
 	err := db.First(thread).Error
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
-	return thread,nil
+	return thread, nil
 }
 
-
 // 全ての Thread を取得
-func (tR threadRepository) FindAllThread()([]*model.Thread,error){
+func (tR threadRepository) FindAllThread() ([]*model.Thread, error) {
 	db := tR.sh.db
 	threads := []*model.Thread{}
 	err := db.Find(&threads).Error
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
-	return threads,nil
+	return threads, nil
 }
