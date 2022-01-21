@@ -91,4 +91,3 @@ func (tR threadRepository) FindAllThread() (*[]*model.Thread, error) {
 	}
 	return threads, nil
 }
-
