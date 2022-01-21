@@ -19,7 +19,7 @@ func NewVoteCommentRepository(sh *SqlHandler) repository.VoteCommentRepository {
 func (vcR *voteCommentRepository) IncreaseCommentVote(vote *model.CommentVote) error {
 	db := vcR.sh.db
 
-	// user_id,comment_idで検索しレコードが存在するか判定
+	// user_id,comment_idで検索しcomment_votes tableにレコードが存在するか判定
 	if err := db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).First(&model.CommentVote{}).Error; err == nil {
 		return fmt.Errorf("this uid already exists")
 	}
@@ -37,7 +37,8 @@ func (vcR *voteCommentRepository) IncreaseCommentVote(vote *model.CommentVote) e
 		return err
 	}
 
-	comment := &model.Comment{Id: vote.CommentID, UserID: vote.UserID}
+	// DBからIDで検索し、commentにbind
+	comment := &model.Comment{Id: vote.CommentID}
 	if err := db.First(comment).Error; err != nil {
 		return err
 	}
@@ -48,7 +49,7 @@ func (vcR *voteCommentRepository) IncreaseCommentVote(vote *model.CommentVote) e
 	} else {
 		comment.VoteCnt = comment.VoteCnt - 1
 	}
-	if err := db.Model(&model.Comment{Id: vote.CommentID, UserID: vote.UserID}).Update(comment).Error; err != nil {
+	if err := db.Model(&model.Comment{Id: vote.CommentID}).Update(comment).Error; err != nil {
 		return err
 	}
 	return db.Save(vote).Error
@@ -58,12 +59,13 @@ func (vcR *voteCommentRepository) IncreaseCommentVote(vote *model.CommentVote) e
 func (vcR *voteCommentRepository) RevokeCommentVote(vote *model.CommentVote) error {
 	db := vcR.sh.db
 
-	// user_id,comment_idで検索しレコードが存在するか判定
+	// user_id,comment_idで検索しcomment_votes tableにレコードが存在するか判定
 	if err := db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).First(&model.CommentVote{}).Error; err != nil {
 		return err
 	}
 
-	comment := &model.Comment{Id: vote.CommentID, UserID: vote.UserID}
+	// DBからIDで検索し、commentにbind
+	comment := &model.Comment{Id: vote.CommentID}
 	if err := db.First(comment).Error; err != nil {
 		return err
 	}
@@ -74,7 +76,7 @@ func (vcR *voteCommentRepository) RevokeCommentVote(vote *model.CommentVote) err
 	} else {
 		comment.VoteCnt = comment.VoteCnt + 1
 	}
-	if err := db.Model(&model.Comment{Id: vote.CommentID, UserID: vote.UserID}).Update(comment).Error; err != nil {
+	if err := db.Model(&model.Comment{Id: vote.CommentID}).Update(comment).Error; err != nil {
 		return err
 	}
 
