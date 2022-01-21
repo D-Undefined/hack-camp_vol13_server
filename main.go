@@ -13,7 +13,7 @@ func main() {
 	sh := persistance.NewDB()
 
 	// repository
-	uR := persistance.NewUserRepository(*sh)
+	uR := persistance.NewUserRepository(sh)
 	tR := persistance.NewThreadRepository(*sh)
 	cR := persistance.NewCommentRepository(sh)
 
