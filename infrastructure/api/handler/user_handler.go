@@ -31,16 +31,7 @@ func NewUserHandler(uR repository.UserRepository) UserHandler {
 // user作成
 func (uH *userHandler) CreateUser(ctx *gin.Context) {
 
-	// userの初期値設定
-	user := &model.User{
-		Comment:  "",
-		Location: "",
-		Twitter:  "",
-		Github:   "",
-		Url:      "",
-		Follow:   0,
-		Follower: 0,
-	}
+	user := &model.User{}
 	if err := ctx.Bind(user); err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return

@@ -1,6 +1,8 @@
 package persistance
 
 import (
+	"fmt"
+
 	"github.com/D-Undefined/hack-camp_vol13_server/domain/model"
 	"github.com/D-Undefined/hack-camp_vol13_server/usecase/repository"
 )
@@ -18,6 +20,11 @@ func NewUserRepository(sh SqlHandler) repository.UserRepository {
 // user作成
 func (uR *userRepository) CreateUser(user *model.User) error {
 	db := uR.sh.db
+	//存在するか確認
+	if err:=db.First(&model.User{Id:user.Id}).Error;err==nil{
+		return fmt.Errorf("this uid already exists")
+	}
+
 	return db.Save(&user).Error
 }
 
