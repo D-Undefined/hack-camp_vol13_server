@@ -61,10 +61,20 @@ func (uR *userRepository) FindUserById(uid string) (*model.User, error) {
 }
 
 // すべてのuserを返す
-func (uR *userRepository) FindAllUser() ([]*model.User, error) {
+func (uR *userRepository) FindAllUser() (*[]*model.User, error) {
 	db := uR.sh.db
-	users := []*model.User{}
-	err := db.Preload("Threads").Find(users).Error
+
+	users := &[]*model.User{
+		{
+			Threads: []*model.Thread{
+				{
+					Comments: []*model.Comment{},
+				},
+			},
+		},
+	}
+
+	err := db.Preload("Threads.Comments").Find(users).Error
 	if err != nil {
 		return nil, err
 	}
