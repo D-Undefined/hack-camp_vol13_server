@@ -10,4 +10,5 @@ type Comment struct {
 	ThreadID  int       `json:"thread_id"`
 	UserID    string    `json:"user_id"`
 	Body      string    `json:"body"`
+	Vote      int       `json:"vote"`
 }

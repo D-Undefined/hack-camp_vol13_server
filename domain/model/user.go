@@ -1,7 +1,7 @@
 package model
 
 type User struct {
-	Id      string `json:"uid" gorm:"primary_key"`
+	Id       string `json:"uid" gorm:"primary_key"`
 	UserName string `json:"user_name"`
 	ImageUrl string `json:"image_url"`
 	Comment  string `json:"comment"`
@@ -11,5 +11,5 @@ type User struct {
 	Url      string `json:"url"`
 	Follow   int    `json:"follow"`
 	Follower int    `json:"follower"`
-	Threads   []*Thread 
+	Threads  []*Thread
 }
