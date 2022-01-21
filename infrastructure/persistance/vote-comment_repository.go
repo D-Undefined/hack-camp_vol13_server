@@ -28,6 +28,16 @@ func (vcR *voteCommentRepository) IncreaseCommentVote(vote *model.CommentVote) e
 	// 	return err
 	// }
 
+
+	// uidがあるかどうか
+	if vote.UserID == "" {
+		return fmt.Errorf("uid is empty")
+	}
+	//存在するか確認
+	if err := db.First(&model.User{Id: vote.UserID}).Error; err != nil {
+		return err
+	}
+
 	comment := &model.Comment{Id: vote.CommentID, UserID: vote.UserID}
 	if err := db.First(comment).Error; err != nil {
 		return err
@@ -69,5 +79,9 @@ func (vcR *voteCommentRepository) RevokeCommentVote(vote *model.CommentVote) err
 		return err
 	}
 
-	return db.Delete(vote).Error
+	//下記のコードだと想定外のdeleteを行っている
+	//おそらく 条件を user_id or commnet_idで削除してるのかな...
+	// return db.Delete(vote).Error
+
+	return db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).Delete(&model.CommentVote{}).Error
 }
