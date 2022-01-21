@@ -15,10 +15,12 @@ func main() {
 	// repository
 	uR := persistance.NewUserRepository(*sh)
 	tR := persistance.NewThreadRepository(*sh)
+	cR := persistance.NewCommentRepository(sh)
 
 	// handler
 	uH := handler.NewUserHandler(uR)
 	tH := handler.NewThreadHandler(tR)
+	cH := handler.NewCommentHandler(cR)
 
 	// server 準備
 	server := gin.Default()
@@ -36,12 +38,16 @@ func main() {
 	v1.PUT("/user/:uid", uH.UpdateUser)
 	v1.DELETE("/user/:uid", uH.DeleteUser)
 
-	// threads
+	// thread
 	v1.GET("/threads", tH.FindAllThread)
 	v1.GET("/thread/:id", tH.FindThreadById)
 	v1.POST("/thread", tH.CreateThread)
 	v1.PUT("/thread/:id", tH.UpdateThread)
 	v1.DELETE("/thread/:id", tH.DeleteThread)
+
+	// comment
+	v1.POST("/comment", cH.CreateComment)
+	v1.DELETE("/comment/:id", cH.DeleteComment)
 
 	server.Run(":8080")
 }

@@ -24,16 +24,16 @@ func NewDB() *SqlHandler {
 		os.Getenv("POSTGRES_DB"),
 	)
 
-    // 稼働待ち
-    for i:=0;i<10;i++{
-        _, err := gorm.Open("postgres", connectionString)
-        if err == nil {
+	// 稼働待ち
+	for i := 0; i < 10; i++ {
+		_, err := gorm.Open("postgres", connectionString)
+		if err == nil {
 			fmt.Printf("### connect.\n")
-            break
-        }
+			break
+		}
 		fmt.Printf("### failed to connect database. connect again.\n")
-        time.Sleep(3 * time.Second)
-    }
+		time.Sleep(3 * time.Second)
+	}
 
 	db, _ := gorm.Open("postgres", connectionString)
 
