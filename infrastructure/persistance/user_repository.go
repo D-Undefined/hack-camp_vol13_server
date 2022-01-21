@@ -18,6 +18,11 @@ func NewUserRepository(sh *SqlHandler) repository.UserRepository {
 // user作成
 func (uR *userRepository) CreateUser(user *model.User) error {
 	db := uR.sh.db
+
+	// uidがあるかどうか
+	if user.Id == "" {
+		return fmt.Errorf("uid is empty")
+	}
 	//存在するか確認
 	if err := db.First(&model.User{Id: user.Id}).Error; err == nil {
 		return fmt.Errorf("this uid already exists")
@@ -73,6 +78,25 @@ func (uR *userRepository) FindAllUser() (*[]*model.User, error) {
 			},
 		},
 	}
+
+	/*
+		返り値の例
+		[
+			{
+				"uid": "a38ty89haeh",
+				"user_name": "hoge",...
+				"Threads": [
+					{
+						"id":1,....
+						"Comments":[{},{},{},...]
+					}
+				]
+
+			},
+			{},
+			{},...
+		]
+	*/
 
 	err := db.Preload("Threads.Comments").Find(users).Error
 	if err != nil {

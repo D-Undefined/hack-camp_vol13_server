@@ -1,6 +1,7 @@
 package persistance
 
 import (
+	"fmt"
 	"github.com/D-Undefined/hack-camp_vol13_server/domain/model"
 	"github.com/D-Undefined/hack-camp_vol13_server/usecase/repository"
 )
@@ -16,19 +17,44 @@ func NewCommentRepository(sh *SqlHandler) repository.CommentRepository {
 func (cR commentRepository) CreateComment(comment *model.Comment) error {
 	db := cR.sh.db
 
+	// uidがあるかどうか
+	if comment.UserID == "" {
+		return fmt.Errorf("uid is empty")
+	}
 	//userが存在するか確認
 	if err := db.First(&model.User{Id: comment.UserID}).Error; err != nil {
 		return err
 	}
 
 	//threadが存在するか確認
-	if err := db.First(&model.Thread{Id: comment.ThreadID}).Error; err != nil {
+	thread := &model.Thread{Id: comment.ThreadID}
+	if err := db.First(thread).Error; err != nil {
 		return err
 	}
+
+	// commentCntを1増やす
+	thread.CommentCnt = thread.CommentCnt + 1
+	if err := db.Model(&model.Thread{Id: comment.ThreadID}).Update(thread).Error; err != nil {
+		return err
+	}
+
 	return db.Save(comment).Error
 }
 
 func (cR commentRepository) DeleteComment(comment *model.Comment) error {
 	db := cR.sh.db
+
+	//threadが存在するか確認
+	thread := &model.Thread{Id: comment.ThreadID}
+	if err := db.First(thread).Error; err != nil {
+		return err
+	}
+
+	// commentCntを1減らす
+	thread.CommentCnt = thread.CommentCnt - 1
+	if err := db.Model(&model.Thread{Id: comment.ThreadID}).Update(thread).Error; err != nil {
+		return err
+	}
+
 	return db.Delete(comment).Error
 }
