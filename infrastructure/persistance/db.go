@@ -37,7 +37,7 @@ func NewDB() *SqlHandler {
 
 	db, _ := gorm.Open("postgres", connectionString)
 
-	db.AutoMigrate(&model.User{}, &model.Thread{}, &model.Comment{})
+	db.AutoMigrate(&model.User{}, &model.Thread{}, &model.Comment{},&model.CommentVote{},&model.ThreadVote{})
 
 	sqlhandler := new(SqlHandler)
 	sqlhandler.db = db
