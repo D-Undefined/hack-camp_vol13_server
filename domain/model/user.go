@@ -4,7 +4,7 @@ type User struct {
 	Id       string    `json:"uid" gorm:"primaryKey;not null"`
 	UserName string    `json:"user_name"`
 	ImageUrl string    `json:"image_url"`
-	Comment  string    `json:"comment"`
+	Bio      string    `json:"bio"`
 	Location string    `json:"location"`
 	Twitter  string    `json:"twitter"`
 	Github   string    `json:"github"`
