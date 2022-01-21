@@ -16,6 +16,12 @@ func NewThreadRepository(sh SqlHandler) repository.ThreadRepository{
 // Thread作成
 func (tR threadRepository) CreateThread(thread *model.Thread) error {
 	db := tR.sh.db
+
+	//userが存在するか確認
+	if err:=db.First(&model.User{Id: thread.UserID}).Error;err!=nil{
+		return err
+	}
+
 	return db.Save(&thread).Error
 }
 
