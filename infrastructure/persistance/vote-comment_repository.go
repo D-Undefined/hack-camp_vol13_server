@@ -28,7 +28,6 @@ func (vcR *voteCommentRepository) IncreaseCommentVote(vote *model.CommentVote) e
 	// 	return err
 	// }
 
-
 	// uidがあるかどうか
 	if vote.UserID == "" {
 		return fmt.Errorf("uid is empty")
