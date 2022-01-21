@@ -36,7 +36,7 @@ func main() {
 	v1 := server.Group("/api/v1")
 
 	// user
-	// v1.GET("/users", uH.FindAllUser)
+	v1.GET("/users", uH.FindAllUser)
 	v1.GET("/user/:uid", uH.FindUserById)
 	v1.POST("/user", uH.CreateUser)
 	v1.PUT("/user/:uid", uH.UpdateUser)

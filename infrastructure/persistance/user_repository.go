@@ -65,42 +65,59 @@ func (uR *userRepository) FindUserById(uid string) (*model.User, error) {
 	return user, nil
 }
 
-// すべてのuserを返す
+// すべてのuserを返す(threadまで)
 func (uR *userRepository) FindAllUser() (*[]*model.User, error) {
 	db := uR.sh.db
 
 	users := &[]*model.User{
 		{
-			Threads: []*model.Thread{
-				{
-					Comments: []*model.Comment{},
-				},
-			},
+			Threads: []*model.Thread{},
 		},
 	}
 
-	/*
-		返り値の例
-		[
-			{
-				"uid": "a38ty89haeh",
-				"user_name": "hoge",...
-				"Threads": [
-					{
-						"id":1,....
-						"Comments":[{},{},{},...]
-					}
-				]
-
-			},
-			{},
-			{},...
-		]
-	*/
-
-	err := db.Preload("Threads.Comments").Find(users).Error
+	err := db.Preload("Threads").Find(users).Error
 	if err != nil {
 		return nil, err
 	}
 	return users, nil
 }
+
+// [おまけ] すべてのuserを返す(commentまで結合)
+// func (uR *userRepository) FindAllUser() (*[]*model.User, error) {
+// 	db := uR.sh.db
+
+// 	users := &[]*model.User{
+// 		{
+// 			Threads: []*model.Thread{
+// 				{
+// 					Comments: []*model.Comment{},
+// 				},
+// 			},
+// 		},
+// 	}
+
+// 	/*
+// 		返り値の例
+// 		[
+// 			{
+// 				"uid": "a38ty89haeh",
+// 				"user_name": "hoge",...
+// 				"Threads": [
+// 					{
+// 						"id":1,....
+// 						"Comments":[{},{},{},...]
+// 					}
+// 				]
+
+// 			},
+// 			{},
+// 			{},...
+// 		]
+// 	*/
+
+// 	err := db.Preload("Threads.Comments").Find(users).Error
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return users, nil
+// }
