@@ -36,7 +36,8 @@ func (tH *threadHandler) CreateThread(ctx *gin.Context) {
 		return
 	}
 
-	if err := tH.tR.CreateThread(thread); err != nil {
+	thread, err := tH.tR.CreateThread(thread)
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}
@@ -76,7 +77,9 @@ func (tH *threadHandler) UpdateThread(ctx *gin.Context) {
 		return
 	}
 
-	if err := tH.tR.UpdateThread(thread); err != nil {
+	thread, err = tH.tR.UpdateThread(thread)
+
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}
