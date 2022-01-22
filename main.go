@@ -69,18 +69,22 @@ func main() {
 
 	// user
 	v1.GET("/users", uH.FindAllUser)
+	v1.GET("/users/ranking",uH.GetUserRanking)
+
 	v1.GET("/user/:uid", uH.FindUserById)
 	v1.POST("/user", uH.CreateUser)
 	v1.PUT("/user/:uid", uH.UpdateUser)
 	v1.DELETE("/user/:uid", uH.DeleteUser)
+	
 
 	// thread
 	v1.GET("/threads", tH.FindAllThread)
+	v1.GET("/threads/trend", tH.FindTrendThread)
+
 	v1.GET("/thread/:id", tH.FindThreadById)
 	v1.POST("/thread", tH.CreateThread)
 	v1.PUT("/thread/:id", tH.UpdateThread)
 	v1.DELETE("/thread/:id", tH.DeleteThread)
-	v1.GET("/threads/trend", tH.FindTrendThread)
 	// v1.GET("/thread/user_ranking", tH.UserOfThreadRanking)
 
 	// thread vote

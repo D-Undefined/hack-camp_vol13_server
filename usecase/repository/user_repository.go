@@ -8,4 +8,5 @@ type UserRepository interface {
 	UpdateUser(*model.User) error
 	FindUserById(string) (*model.User, error)
 	FindAllUser() (*[]*model.User, error)
+	GetUserRanking()(*[]*model.User,error)
 }
