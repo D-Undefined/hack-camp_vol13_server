@@ -86,15 +86,14 @@ func (uR *userRepository) FindAllUser() (*[]*model.User, error) {
 }
 
 // 上位10名の userを表示 (Scoreを基準とする)
-func (uR *userRepository) GetUserRanking()(*[]*model.User,error){
+func (uR *userRepository) GetUserRanking() (*[]*model.User, error) {
 	db := uR.sh.db
 	top_users := &[]*model.User{}
-	if err:=db.Limit(2).Order("score desc").Find(top_users).Error;err!=nil{
-		return nil,err
+	if err := db.Limit(2).Order("score desc").Find(top_users).Error; err != nil {
+		return nil, err
 	}
-	return top_users,nil
+	return top_users, nil
 }
-
 
 // [おまけ] すべてのuserを返す(commentまで結合)
 // func (uR *userRepository) FindAllUser() (*[]*model.User, error) {

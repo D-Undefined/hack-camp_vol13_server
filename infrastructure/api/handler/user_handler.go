@@ -97,12 +97,10 @@ func (uH *userHandler) FindAllUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, users)
 }
 
-
-
 // 上位10名の userを表示 (Scoreを基準とする)
-func (uH *userHandler) GetUserRanking(ctx *gin.Context){
-	top_users,err := uH.uR.GetUserRanking()
-	if err!=nil{
+func (uH *userHandler) GetUserRanking(ctx *gin.Context) {
+	top_users, err := uH.uR.GetUserRanking()
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}
