@@ -87,9 +87,7 @@ func (vcR *voteCommentRepository) RevokeVoteComment(vote *model.VoteComment) err
 	return db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).Delete(&model.VoteComment{}).Error
 }
 
-
-
-// // good/bad済みか 
+// // good/bad済みか
 // // もしすでにしてるものがあればそのcomment_idを返す
 // func (vcR *voteCommentRepository) FindVoteCommentIdOfVoted(uid string,thread_id int) (*[]int,error){
 // 	thread := &model.Thread{}
