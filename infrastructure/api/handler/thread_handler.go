@@ -19,6 +19,7 @@ type ThreadHandler interface {
 	UpdateThread(ctx *gin.Context)
 	FindThreadById(ctx *gin.Context)
 	FindAllThread(ctx *gin.Context)
+	FindTrendThread(ctx *gin.Context)
 	// UserOfThreadRanking(ctx *gin.Context)
 }
 
@@ -27,7 +28,7 @@ func NewThreadHandler(tR repository.ThreadRepository) ThreadHandler {
 }
 
 // Thread作成
-func (tH threadHandler) CreateThread(ctx *gin.Context) {
+func (tH *threadHandler) CreateThread(ctx *gin.Context) {
 	thread := &model.Thread{}
 
 	if err := ctx.Bind(thread); err != nil {
@@ -43,7 +44,7 @@ func (tH threadHandler) CreateThread(ctx *gin.Context) {
 }
 
 // Thread削除
-func (tH threadHandler) DeleteThread(ctx *gin.Context) {
+func (tH *threadHandler) DeleteThread(ctx *gin.Context) {
 	idString := ctx.Param("id")
 	id, err := strconv.Atoi(idString)
 	if err != nil {
@@ -60,7 +61,7 @@ func (tH threadHandler) DeleteThread(ctx *gin.Context) {
 }
 
 // Thread更新
-func (tH threadHandler) UpdateThread(ctx *gin.Context) {
+func (tH *threadHandler) UpdateThread(ctx *gin.Context) {
 	idString := ctx.Param("id")
 	id, err := strconv.Atoi(idString)
 	if err != nil {
@@ -84,7 +85,7 @@ func (tH threadHandler) UpdateThread(ctx *gin.Context) {
 }
 
 // IDで Threadを検索
-func (tH threadHandler) FindThreadById(ctx *gin.Context) {
+func (tH *threadHandler) FindThreadById(ctx *gin.Context) {
 	idString := ctx.Param("id")
 	id, err := strconv.Atoi(idString)
 
@@ -104,7 +105,7 @@ func (tH threadHandler) FindThreadById(ctx *gin.Context) {
 }
 
 // 全ての Thread を取得
-func (tH threadHandler) FindAllThread(ctx *gin.Context) {
+func (tH *threadHandler) FindAllThread(ctx *gin.Context) {
 	threads, err := tH.tR.FindAllThread()
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
@@ -114,6 +115,16 @@ func (tH threadHandler) FindAllThread(ctx *gin.Context) {
 
 }
 
+// trendのthreadを 5件返す
+func (tH *threadHandler) FindTrendThread(ctx *gin.Context) {
+	trend_threads, err := tH.tR.FindTrendThread()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, trend_threads)
+}
+
 // // Thread(VoteCnt)の user ランキング
 // func (tH *threadHandler) UserOfThreadRanking(ctx *gin.Context) {
 // 	results, err := tH.tR.UserOfThreadRanking()
@@ -121,6 +132,5 @@ func (tH threadHandler) FindAllThread(ctx *gin.Context) {
 // 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 // 		return
 // 	}
-
 // 	ctx.JSON(http.StatusOK, results)
 // }

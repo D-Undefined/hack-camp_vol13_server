@@ -2,6 +2,7 @@ package persistance
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/D-Undefined/hack-camp_vol13_server/domain/model"
 	"github.com/D-Undefined/hack-camp_vol13_server/usecase/repository"
@@ -98,6 +99,27 @@ func (tR *threadRepository) FindAllThread() (*[]*model.Thread, error) {
 		return nil, err
 	}
 	return threads, nil
+}
+
+// 過去１週間の trendのthreadを 10件返す
+func (tR *threadRepository) FindTrendThread() (*[]*model.Thread, error) {
+	var now, lastWeek time.Time
+
+	db := tR.sh.db
+	trend_thread := &[]*model.Thread{}
+
+	// test してないので 正しく動くか不安
+	now = time.Now()
+	lastWeek = now.AddDate(0, 0, -7)
+
+	if err := db.Where("created_at BETWEEN ? AND ?", lastWeek, now).
+		Limit(10).
+		Order("vote_cnt desc").
+		Find(trend_thread).Error; err != nil {
+		return nil, err
+	}
+
+	return trend_thread, nil
 }
 
 // Thread(VoteCnt)の user ランキング

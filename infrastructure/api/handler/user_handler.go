@@ -32,7 +32,7 @@ func (uH *userHandler) CreateUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}
-	resUser,err := uH.uR.CreateUser(user)
+	resUser, err := uH.uR.CreateUser(user)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
