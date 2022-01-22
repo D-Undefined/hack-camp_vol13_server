@@ -115,7 +115,7 @@ func (tH *threadHandler) FindAllThread(ctx *gin.Context) {
 
 }
 
-// trendのthreadを 5件返す
+// 過去１週間の trendのthreadを 10件返す
 func (tH *threadHandler) FindTrendThread(ctx *gin.Context) {
 	trend_threads, err := tH.tR.FindTrendThread()
 	if err != nil {
