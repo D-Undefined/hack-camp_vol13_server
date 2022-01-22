@@ -55,7 +55,7 @@ func main() {
 			"Authorization",
 		},
 		// preflightリクエストの結果をキャッシュする時間
-    MaxAge: 24 * time.Hour,
+		MaxAge: 24 * time.Hour,
 	}))
 
 	// test server
@@ -65,10 +65,12 @@ func main() {
 	v1 := server.Group("/api/v1")
 
 	// get statistics data
-	v1.GET("/statistics",sH.GetStatistics)
+	v1.GET("/statistics", sH.GetStatistics)
 
 	// user
 	v1.GET("/users", uH.FindAllUser)
+	v1.GET("/users/ranking", uH.GetUserRanking)
+
 	v1.GET("/user/:uid", uH.FindUserById)
 	v1.POST("/user", uH.CreateUser)
 	v1.PUT("/user/:uid", uH.UpdateUser)
@@ -76,6 +78,8 @@ func main() {
 
 	// thread
 	v1.GET("/threads", tH.FindAllThread)
+	v1.GET("/threads/trend", tH.FindTrendThread)
+
 	v1.GET("/thread/:id", tH.FindThreadById)
 	v1.POST("/thread", tH.CreateThread)
 	v1.PUT("/thread/:id", tH.UpdateThread)

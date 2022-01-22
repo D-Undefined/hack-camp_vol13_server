@@ -20,7 +20,9 @@ func (vcR *voteCommentRepository) IncreaseVoteComment(vote *model.VoteComment) e
 	db := vcR.sh.db
 
 	// user_id,comment_idで検索しcomment_votes tableにレコードが存在するか判定
-	if err := db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).First(&model.VoteComment{}).Error; err == nil {
+	err := db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).
+		First(&model.VoteComment{}).Error
+	if err == nil {
 		return fmt.Errorf("this uid already exists")
 	}
 	//以下のコードはなぜかうまくいかない...
@@ -82,7 +84,9 @@ func (vcR *voteCommentRepository) RevokeVoteComment(vote *model.VoteComment) err
 	db := vcR.sh.db
 
 	// user_id,comment_idで検索しcomment_votes tableにレコードが存在するか判定
-	if err := db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).First(&model.VoteComment{}).Error; err != nil {
+	err := db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).
+		First(&model.VoteComment{}).Error
+	if err != nil {
 		return err
 	}
 
@@ -159,7 +163,9 @@ func (vcR *voteCommentRepository) FindVoteCommentIdOfVoted(uid string, threadId 
 		return vote_comments, nil
 	}
 
-	if err := db.Where("user_id = ? AND comment_id IN (?) ", uid, thread_comment_id).Find(vote_comments).Error; err != nil {
+	err := db.Where("user_id = ? AND comment_id IN (?) ", uid, thread_comment_id).
+		Find(vote_comments).Error
+	if err != nil {
 		return nil, err
 	}
 

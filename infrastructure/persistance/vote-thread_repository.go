@@ -21,7 +21,9 @@ func (vtR *voteThreadRepository) IncreaseVoteThread(vote *model.VoteThread) erro
 
 	// user_id,thread_idで検索し
 	// thread_votes tableにレコードが存在するか判定
-	if err := db.Where("user_id = ? AND thread_id = ?", vote.UserID, vote.ThreadID).First(&model.VoteThread{}).Error; err == nil {
+	err := db.Where("user_id = ? AND thread_id = ?", vote.UserID, vote.ThreadID).
+		First(&model.VoteThread{}).Error
+	if err == nil {
 		return fmt.Errorf("this uid and thread_id already exists")
 	}
 
@@ -80,7 +82,10 @@ func (vtR *voteThreadRepository) RevokeVoteThread(vote *model.VoteThread) error 
 
 	// user_id,thread_idで検索し
 	// thread_votes tableにレコードが存在するか判定
-	if err := db.Where("user_id = ? AND thread_id = ?", vote.UserID, vote.ThreadID).First(&model.VoteThread{}).Error; err != nil {
+
+	err := db.Where("user_id = ? AND thread_id = ?", vote.UserID, vote.ThreadID).
+		First(&model.VoteThread{}).Error
+	if err != nil {
 		return err
 	}
 
