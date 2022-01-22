@@ -16,15 +16,15 @@ func NewVoteCommentRepository(sh *SqlHandler) repository.VoteCommentRepository {
 }
 
 // good/bad を増やす
-func (vcR *voteCommentRepository) IncreaseCommentVote(vote *model.CommentVote) error {
+func (vcR *voteCommentRepository) IncreaseVoteComment(vote *model.VoteComment) error {
 	db := vcR.sh.db
 
 	// user_id,comment_idで検索しcomment_votes tableにレコードが存在するか判定
-	if err := db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).First(&model.CommentVote{}).Error; err == nil {
+	if err := db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).First(&model.VoteComment{}).Error; err == nil {
 		return fmt.Errorf("this uid already exists")
 	}
 	//以下のコードはなぜかうまくいかない...
-	// if err:=db.First(&model.CommentVote{CommentID: vote.CommentID,UserID: vote.UserID}).Error;err!=nil{
+	// if err:=db.First(&model.VoteComment{CommentID: vote.CommentID,UserID: vote.UserID}).Error;err!=nil{
 	// 	return err
 	// }
 
@@ -56,11 +56,11 @@ func (vcR *voteCommentRepository) IncreaseCommentVote(vote *model.CommentVote) e
 }
 
 // good/bad の取り消し
-func (vcR *voteCommentRepository) RevokeCommentVote(vote *model.CommentVote) error {
+func (vcR *voteCommentRepository) RevokeVoteComment(vote *model.VoteComment) error {
 	db := vcR.sh.db
 
 	// user_id,comment_idで検索しcomment_votes tableにレコードが存在するか判定
-	if err := db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).First(&model.CommentVote{}).Error; err != nil {
+	if err := db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).First(&model.VoteComment{}).Error; err != nil {
 		return err
 	}
 
@@ -84,5 +84,14 @@ func (vcR *voteCommentRepository) RevokeCommentVote(vote *model.CommentVote) err
 	//おそらく 条件を user_id or commnet_idで削除してるのかな...
 	// return db.Delete(vote).Error
 
-	return db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).Delete(&model.CommentVote{}).Error
+	return db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).Delete(&model.VoteComment{}).Error
 }
+
+
+
+// // good/bad済みか 
+// // もしすでにしてるものがあればそのcomment_idを返す
+// func (vcR *voteCommentRepository) FindVoteCommentIdOfVoted(uid string,thread_id int) (*[]int,error){
+// 	thread := &model.Thread{}
+
+// }

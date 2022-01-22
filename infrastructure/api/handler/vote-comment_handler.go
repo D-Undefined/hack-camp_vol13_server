@@ -13,8 +13,8 @@ type voteCommentHandler struct {
 }
 
 type VoteCommentHandler interface {
-	IncreaseCommentVote(*gin.Context)
-	RevokeCommentVote(*gin.Context)
+	IncreaseVoteComment(*gin.Context)
+	RevokeVoteComment(*gin.Context)
 }
 
 func NewVoteCommentHandler(vcR repository.VoteCommentRepository) VoteCommentHandler {
@@ -22,13 +22,13 @@ func NewVoteCommentHandler(vcR repository.VoteCommentRepository) VoteCommentHand
 }
 
 // good/bad を増やす
-func (vcH *voteCommentHandler) IncreaseCommentVote(ctx *gin.Context) {
-	comment_vote := &model.CommentVote{}
+func (vcH *voteCommentHandler) IncreaseVoteComment(ctx *gin.Context) {
+	comment_vote := &model.VoteComment{}
 	if err := ctx.Bind(comment_vote); err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}
-	if err := vcH.vcR.IncreaseCommentVote(comment_vote); err != nil {
+	if err := vcH.vcR.IncreaseVoteComment(comment_vote); err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}
@@ -36,13 +36,13 @@ func (vcH *voteCommentHandler) IncreaseCommentVote(ctx *gin.Context) {
 }
 
 // good/bad の取り消し
-func (vcH *voteCommentHandler) RevokeCommentVote(ctx *gin.Context) {
-	comment_vote := &model.CommentVote{}
+func (vcH *voteCommentHandler) RevokeVoteComment(ctx *gin.Context) {
+	comment_vote := &model.VoteComment{}
 	if err := ctx.Bind(comment_vote); err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}
-	if err := vcH.vcR.RevokeCommentVote(comment_vote); err != nil {
+	if err := vcH.vcR.RevokeVoteComment(comment_vote); err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}

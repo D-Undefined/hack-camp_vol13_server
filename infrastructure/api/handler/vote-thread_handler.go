@@ -13,8 +13,8 @@ type voteThreadHandler struct {
 }
 
 type VoteThreadHandler interface {
-	IncreaseThreadVote(*gin.Context)
-	RevokeThreadVote(*gin.Context)
+	IncreaseVoteThread(*gin.Context)
+	RevokeVoteThread(*gin.Context)
 }
 
 func NewVoteThreadHandler(vtR repository.VoteThreadRepository) VoteThreadHandler {
@@ -22,13 +22,13 @@ func NewVoteThreadHandler(vtR repository.VoteThreadRepository) VoteThreadHandler
 }
 
 // good/bad を増やす
-func (vtH *voteThreadHandler) IncreaseThreadVote(ctx *gin.Context) {
-	thread_vote := &model.ThreadVote{}
+func (vtH *voteThreadHandler) IncreaseVoteThread(ctx *gin.Context) {
+	thread_vote := &model.VoteThread{}
 	if err := ctx.Bind(thread_vote); err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}
-	if err := vtH.vtR.IncreaseThreadVote(thread_vote); err != nil {
+	if err := vtH.vtR.IncreaseVoteThread(thread_vote); err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}
@@ -36,13 +36,13 @@ func (vtH *voteThreadHandler) IncreaseThreadVote(ctx *gin.Context) {
 }
 
 // good/bad の取り消し
-func (vtH *voteThreadHandler) RevokeThreadVote(ctx *gin.Context) {
-	thread_vote := &model.ThreadVote{}
+func (vtH *voteThreadHandler) RevokeVoteThread(ctx *gin.Context) {
+	thread_vote := &model.VoteThread{}
 	if err := ctx.Bind(thread_vote); err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}
-	if err := vtH.vtR.RevokeThreadVote(thread_vote); err != nil {
+	if err := vtH.vtR.RevokeVoteThread(thread_vote); err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}
