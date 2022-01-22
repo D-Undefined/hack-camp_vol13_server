@@ -12,5 +12,6 @@ type User struct {
 	Follow   int       `json:"follow"`
 	Follower int       `json:"follower"`
 	Belong   string    `json:"belong"`
+	Score    int       `json:"score"`
 	Threads  []*Thread `gorm:"constraint:OnDelete:CASCADE"`
 }
