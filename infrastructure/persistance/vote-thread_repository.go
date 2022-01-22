@@ -134,7 +134,7 @@ func (vtR *voteThreadRepository) CheckVoteThread(uid string, threadId int) (*mod
 
 	vote_thread := &model.VoteThread{}
 	if err := db.Where(&model.VoteThread{ThreadID: threadId, UserID: uid}).Find(vote_thread).Error; err != nil {
-		return nil, err
+		return &model.VoteThread{}, err
 	}
 	return vote_thread, nil
 }

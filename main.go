@@ -53,6 +53,9 @@ func main() {
 	// thread vote
 	v1.POST("/vote_thread", vtH.IncreaseVoteThread)
 	v1.DELETE("/vote_thread", vtH.RevokeVoteThread)
+
+	// uid が thread_id に対して　投票してるか
+	// 投票してた場合 model.VoteThreadの型で返す
 	v1.GET("/vote_thread/:uid/:thread_id", vtH.CheckVoteThread)
 
 	// comment
@@ -62,6 +65,10 @@ func main() {
 	// comment vote
 	v1.POST("/vote_comment", vcH.IncreaseVoteComment)
 	v1.DELETE("/vote_comment", vcH.RevokeVoteComment)
+
+	// thread id でコメント一覧を取得し
+	// その中でどのコメントにuidが投票したcomment一覧をリストで返す
+	// 投票したcommentがないときは空配列を返す
 	v1.GET("/vote_comment/:uid/:thread_id", vcH.FindVoteCommentIdOfVoted)
 
 	server.Run(":8080")

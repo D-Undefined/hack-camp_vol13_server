@@ -63,9 +63,14 @@ func (vtH *voteThreadHandler) CheckVoteThread(ctx *gin.Context) {
 	}
 
 	vote_thread, err := vtH.vtR.CheckVoteThread(uid, threadId)
+
+	/* error でも StatusOKにしてます
+	理由は存在しなかった場合でも正常処理を行いたいからです
+	ほかにいい書き方があれば絶対に変えたほうが良いです*/
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
+		ctx.JSON(http.StatusOK, gin.H{"message":"not found"})
 		return
 	}
+
 	ctx.JSON(http.StatusOK, vote_thread)
 }
