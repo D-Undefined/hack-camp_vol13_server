@@ -89,6 +89,11 @@ func (vtR *voteThreadRepository) RevokeVoteThread(vote *model.VoteThread) error 
 		return err
 	}
 
+	// uidがあるかどうか
+	if vote.UserID == "" {
+		return fmt.Errorf("uid is empty")
+	}
+
 	// 投票した user
 	vote_user := &model.User{Id: vote.UserID}
 	//userが存在するか確認
@@ -136,6 +141,15 @@ func (vtR *voteThreadRepository) RevokeVoteThread(vote *model.VoteThread) error 
 // good/bad済みか
 func (vtR *voteThreadRepository) CheckVoteThread(uid string, threadId int) (*model.VoteThread, error) {
 	db := vtR.sh.db
+
+	// uidがあるかどうか
+	if uid == "" {
+		return nil, fmt.Errorf("uid is empty")
+	}
+	// thread_idがあるかどうか
+	if threadId == 0 {
+		return nil, fmt.Errorf("thread_id is empty")
+	}
 
 	vote_thread := &model.VoteThread{}
 	if err := db.Where(&model.VoteThread{ThreadID: threadId, UserID: uid}).Find(vote_thread).Error; err != nil {

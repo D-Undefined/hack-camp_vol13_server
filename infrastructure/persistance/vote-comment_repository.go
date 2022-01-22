@@ -35,6 +35,12 @@ func (vcR *voteCommentRepository) IncreaseVoteComment(vote *model.VoteComment) e
 		return fmt.Errorf("uid is empty")
 	}
 
+	// comment_idがあるかどうか
+	// commentIDはBindされたときに0になるっぽい
+	if vote.CommentID == 0 {
+		return fmt.Errorf("comment_id is empty")
+	}
+
 	// 投票した user
 	vote_user := &model.User{Id: vote.UserID}
 	//存在するか確認
@@ -90,6 +96,15 @@ func (vcR *voteCommentRepository) RevokeVoteComment(vote *model.VoteComment) err
 		return err
 	}
 
+	// uidがあるかどうか
+	if vote.UserID == "" {
+		return fmt.Errorf("uid is empty")
+	}
+	// comment_idがあるかどうか
+	if vote.CommentID == 0 {
+		return fmt.Errorf("comment_id is empty")
+	}
+
 	// 投票した user
 	vote_user := &model.User{Id: vote.UserID}
 	//存在するか確認
@@ -142,6 +157,15 @@ func (vcR *voteCommentRepository) RevokeVoteComment(vote *model.VoteComment) err
 // もしすでにしてるものがあればそのcomment_idを返す
 func (vcR *voteCommentRepository) FindVoteCommentIdOfVoted(uid string, threadId int) (*[]*model.VoteComment, error) {
 	db := vcR.sh.db
+
+	// uidがあるかどうか
+	if uid == "" {
+		return nil, fmt.Errorf("uid is empty")
+	}
+	// thread_idがあるかどうか
+	if threadId == 0 {
+		return nil, fmt.Errorf("thread_id is empty")
+	}
 
 	thread := &model.Thread{
 		Comments: []*model.Comment{},
