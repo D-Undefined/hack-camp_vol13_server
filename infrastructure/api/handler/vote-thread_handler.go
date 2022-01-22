@@ -68,7 +68,7 @@ func (vtH *voteThreadHandler) CheckVoteThread(ctx *gin.Context) {
 	理由は存在しなかった場合でも正常処理を行いたいからです
 	ほかにいい書き方があれば絶対に変えたほうが良いです*/
 	if err != nil {
-		ctx.JSON(http.StatusOK, gin.H{"message":"not found"})
+		ctx.JSON(http.StatusOK, gin.H{"message": "not found"})
 		return
 	}
 
