@@ -2,9 +2,12 @@ package main
 
 import (
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/D-Undefined/hack-camp_vol13_server/infrastructure/api/handler"
 	"github.com/D-Undefined/hack-camp_vol13_server/infrastructure/persistance"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,6 +33,30 @@ func main() {
 
 	// server 準備
 	server := gin.Default()
+	server.Use(cors.New(cors.Config{
+		AllowOrigins: []string{
+			"http://localhost:3000",
+			"https://hack-camp-vol13-front.vercel.app",
+		},
+		AllowMethods: []string{
+			"POST",
+			"GET",
+			"OPTIONS",
+			"PUT",
+			"DELETE",
+		},
+		// 許可したいHTTPリクエストヘッダの一覧
+		AllowHeaders: []string{
+			"Access-Control-Allow-Headers",
+			"Content-Type",
+			"Content-Length",
+			"Accept-Encoding",
+			"X-CSRF-Token",
+			"Authorization",
+		},
+		// preflightリクエストの結果をキャッシュする時間
+    MaxAge: 24 * time.Hour,
+	}))
 
 	// test server
 	server.GET("/", health)
@@ -76,7 +103,7 @@ func main() {
 	// 投票したcommentがないときは空配列を返す
 	v1.GET("/vote_comment/:uid/:thread_id", vcH.FindVoteCommentIdOfVoted)
 
-	server.Run(":8080")
+	server.Run(":" + os.Getenv("PORT"))
 }
 
 func health(ctx *gin.Context) {
