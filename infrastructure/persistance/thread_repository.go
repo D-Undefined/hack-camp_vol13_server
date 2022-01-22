@@ -79,7 +79,7 @@ func (tR *threadRepository) UpdateThread(thread *model.Thread) error {
 func (tR *threadRepository) FindThreadById(id int) (*model.Thread, error) {
 	db := tR.sh.db
 	thread := &model.Thread{
-		Id:       id,
+		Id: id,
 		Comments: []*model.Comment{
 			{
 				User: &model.User{},
@@ -93,9 +93,6 @@ func (tR *threadRepository) FindThreadById(id int) (*model.Thread, error) {
 	}
 	return thread, nil
 }
-
-
-
 
 // 全ての Thread を取得
 func (tR *threadRepository) FindAllThread() (*[]*model.Thread, error) {
