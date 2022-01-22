@@ -13,6 +13,7 @@ func main() {
 	sh := persistance.NewDB()
 
 	// repository
+	sR := persistance.NewStatisticsRepository(sh)
 	uR := persistance.NewUserRepository(sh)
 	tR := persistance.NewThreadRepository(sh)
 	cR := persistance.NewCommentRepository(sh)
@@ -20,6 +21,7 @@ func main() {
 	vtR := persistance.NewVoteThreadRepository(sh)
 
 	// handler
+	sH := handler.NewStatisticsHandler(sR)
 	uH := handler.NewUserHandler(uR)
 	tH := handler.NewThreadHandler(tR)
 	cH := handler.NewCommentHandler(cR)
@@ -34,6 +36,9 @@ func main() {
 
 	// api var.1.0.0
 	v1 := server.Group("/api/v1")
+
+	// get statistics data
+	v1.GET("/statistics",sH.GetStatistics)
 
 	// user
 	v1.GET("/users", uH.FindAllUser)
