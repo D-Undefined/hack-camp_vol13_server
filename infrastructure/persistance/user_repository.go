@@ -16,19 +16,22 @@ func NewUserRepository(sh *SqlHandler) repository.UserRepository {
 }
 
 // user作成
-func (uR *userRepository) CreateUser(user *model.User) error {
+func (uR *userRepository) CreateUser(user *model.User) (*model.User,error) {
 	db := uR.sh.db
 
 	// uidがあるかどうか
 	if user.Id == "" {
-		return fmt.Errorf("uid is empty")
-	}
-	//存在するか確認
-	if err := db.First(&model.User{Id: user.Id}).Error; err == nil {
-		return fmt.Errorf("this uid already exists")
+		return nil,fmt.Errorf("uid is empty")
 	}
 
-	return db.Save(user).Error
+	//存在するか確認
+	// 既に存在する場合　resUserにデータをバインドして返す
+	resUser := &model.User{Id: user.Id}
+	if err := db.First(resUser).Error; err == nil {
+		return resUser,nil
+	}
+
+	return user, db.Save(user).Error
 }
 
 // user 削除

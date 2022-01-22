@@ -21,8 +21,11 @@ func (cR commentRepository) CreateComment(comment *model.Comment) error {
 	if comment.UserID == "" {
 		return fmt.Errorf("uid is empty")
 	}
+
+	user := &model.User{Id: comment.UserID}
+
 	//userが存在するか確認
-	if err := db.First(&model.User{Id: comment.UserID}).Error; err != nil {
+	if err := db.First(user).Error; err != nil {
 		return err
 	}
 
@@ -35,6 +38,12 @@ func (cR commentRepository) CreateComment(comment *model.Comment) error {
 	// commentCntを1増やす
 	thread.CommentCnt = thread.CommentCnt + 1
 	if err := db.Model(&model.Thread{Id: comment.ThreadID}).Update(thread).Error; err != nil {
+		return err
+	}
+
+	// 投稿 userのScoreを5増やす
+	user.Score = user.Score + 5
+	if err := db.Model(&model.User{Id: comment.UserID}).Update(user).Error; err != nil {
 		return err
 	}
 

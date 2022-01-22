@@ -19,6 +19,7 @@ type ThreadHandler interface {
 	UpdateThread(ctx *gin.Context)
 	FindThreadById(ctx *gin.Context)
 	FindAllThread(ctx *gin.Context)
+	// UserOfThreadRanking(ctx *gin.Context)
 }
 
 func NewThreadHandler(tR repository.ThreadRepository) ThreadHandler {
@@ -112,3 +113,14 @@ func (tH threadHandler) FindAllThread(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, threads)
 
 }
+
+// // Thread(VoteCnt)の user ランキング
+// func (tH *threadHandler) UserOfThreadRanking(ctx *gin.Context) {
+// 	results, err := tH.tR.UserOfThreadRanking()
+// 	if err != nil {
+// 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
+// 		return
+// 	}
+
+// 	ctx.JSON(http.StatusOK, results)
+// }

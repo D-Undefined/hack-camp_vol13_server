@@ -32,12 +32,13 @@ func (uH *userHandler) CreateUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}
-	if err := uH.uR.CreateUser(user); err != nil {
+	resUser,err := uH.uR.CreateUser(user)
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusOK, resUser)
 }
 
 // user 削除

@@ -24,7 +24,7 @@ func NewDB() *SqlHandler {
 		} else {
 		// 開発環境
 		connectionString = fmt.Sprintf(
-			"postgres://%s:%s@db:%s/%s?sslmode=require",
+			"postgres://%s:%s@db:%s/%s?sslmode=disable",
 			os.Getenv("POSTGRES_USER"),
 			os.Getenv("POSTGRES_PASSWORD"),
 			"5432",
@@ -46,7 +46,8 @@ func NewDB() *SqlHandler {
 
 	db, _ := gorm.Open("postgres", connectionString)
 
-	db.AutoMigrate(&model.User{}, &model.Thread{}, &model.Comment{}, &model.CommentVote{}, &model.ThreadVote{})
+	db.AutoMigrate(&model.User{}, &model.Thread{}, &model.Comment{})
+	db.AutoMigrate(&model.VoteComment{}, &model.VoteThread{})
 
 	sqlhandler := new(SqlHandler)
 	sqlhandler.db = db
