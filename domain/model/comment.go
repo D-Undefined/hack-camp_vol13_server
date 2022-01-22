@@ -11,5 +11,5 @@ type Comment struct {
 	UserID    string         `json:"uid"`
 	Body      string         `json:"body"`
 	VoteCnt   int            `json:"vote_cnt"`
-	Vote      []*CommentVote `gorm:"constraint:OnDelete:CASCADE"`
+	Vote      []*VoteComment `gorm:"constraint:OnDelete:CASCADE"`
 }

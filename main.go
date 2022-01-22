@@ -32,7 +32,7 @@ func main() {
 	// test server
 	server.GET("/", health)
 
-	// api var.1
+	// api var.1.0.0
 	v1 := server.Group("/api/v1")
 
 	// user
@@ -50,16 +50,18 @@ func main() {
 	v1.DELETE("/thread/:id", tH.DeleteThread)
 
 	// thread vote
-	v1.POST("/thread_vote", vtH.IncreaseThreadVote)
-	v1.DELETE("/thread_vote", vtH.RevokeThreadVote)
+	v1.POST("/vote_thread", vtH.IncreaseVoteThread)
+	v1.DELETE("/vote_thread", vtH.RevokeVoteThread)
+	v1.GET("/vote_thread/:uid/:thread_id", vtH.CheckVoteThread)
 
 	// comment
 	v1.POST("/comment", cH.CreateComment)
 	v1.DELETE("/comment/:id", cH.DeleteComment)
 
 	// comment vote
-	v1.POST("/comment_vote", vcH.IncreaseCommentVote)
-	v1.DELETE("/comment_vote", vcH.RevokeCommentVote)
+	v1.POST("/vote_comment", vcH.IncreaseVoteComment)
+	v1.DELETE("/vote_comment", vcH.RevokeVoteComment)
+	v1.GET("/vote_comment/:uid/:thread_id", vcH.FindVoteCommentIdOfVoted)
 
 	server.Run(":8080")
 }
