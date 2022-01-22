@@ -80,15 +80,22 @@ func (tR *threadRepository) FindThreadById(id int) (*model.Thread, error) {
 	db := tR.sh.db
 	thread := &model.Thread{
 		Id:       id,
-		Comments: []*model.Comment{},
+		Comments: []*model.Comment{
+			{
+				User: &model.User{},
+			},
+		},
 	}
 
-	err := db.Preload("Comments").First(thread).Error
+	err := db.Preload("Comments.User").First(thread).Error
 	if err != nil {
 		return nil, err
 	}
 	return thread, nil
 }
+
+
+
 
 // 全ての Thread を取得
 func (tR *threadRepository) FindAllThread() (*[]*model.Thread, error) {
