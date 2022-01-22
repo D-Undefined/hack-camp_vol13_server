@@ -23,8 +23,16 @@ func (tR *threadRepository) CreateThread(thread *model.Thread) error {
 	if thread.UserID == "" {
 		return fmt.Errorf("uid is empty")
 	}
+
 	// userが存在するか確認
-	if err := db.First(&model.User{Id: thread.UserID}).Error; err != nil {
+	user := &model.User{Id: thread.UserID}
+	if err := db.First(user).Error; err != nil {
+		return err
+	}
+
+	//作成した user の　scoreを30増やす
+	user.Score = user.Score + 30
+	if err := db.Model(&model.User{Id: thread.UserID}).Update(user).Error; err != nil {
 		return err
 	}
 
@@ -39,6 +47,7 @@ func (tR *threadRepository) DeleteThread(thread *model.Thread) error {
 		return err
 	}
 
+	// CASCADE 実装したかった (できてない)
 	// thread に　Commentを結合
 	// if err:=db.Model(&model.Thread{Id: thread.Id}).Association("Comments").Error;err!=nil{
 	// 	return err
@@ -48,9 +57,8 @@ func (tR *threadRepository) DeleteThread(thread *model.Thread) error {
 	// 	return err
 	// }
 
-	// fmt.Printf("@@@@@@ %v\n",thread)
-
 	// return db.Select("Comments").Delete(thread).Error
+
 	return db.Delete(thread).Error
 
 }
@@ -82,7 +90,7 @@ func (tR *threadRepository) FindThreadById(id int) (*model.Thread, error) {
 }
 
 // 全ての Thread を取得
-func (tR threadRepository) FindAllThread() (*[]*model.Thread, error) {
+func (tR *threadRepository) FindAllThread() (*[]*model.Thread, error) {
 	db := tR.sh.db
 	threads := &[]*model.Thread{}
 	err := db.Find(threads).Error
@@ -91,3 +99,37 @@ func (tR threadRepository) FindAllThread() (*[]*model.Thread, error) {
 	}
 	return threads, nil
 }
+
+// Thread(VoteCnt)の user ランキング
+// Threadが0のユーザーはランキングに乗らない
+// func (tR *threadRepository) UserOfThreadRanking() (*[]*model.UserRanking, error) {
+// 	db := tR.sh.db
+
+// 	results := &[]*model.UserRanking{
+// 		{
+// 			User: &model.User{},
+// 		},
+// 	}
+
+// 	if err := db.Table("threads").
+// 				Select("user_id, sum(vote_cnt) as vote_sum").
+// 				Group("user_id").
+// 				Limit(50).
+// 				Find(results).Error;
+// 				err != nil {
+// 					return nil, err
+// 	}
+
+// 	fmt.Printf("### %v\n",results)
+
+// 	if err:=db.Joins("left join users on users.id = user_rankings.user_id").
+// 				// Order("vote_sum").
+// 				Scan(results).Error;
+// 				err!=nil{
+// 					return nil,err
+// 	}
+
+// 	fmt.Printf("$$$ %v\n",results)
+
+// 	return results, nil
+// }

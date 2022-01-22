@@ -48,6 +48,7 @@ func main() {
 	v1.POST("/thread", tH.CreateThread)
 	v1.PUT("/thread/:id", tH.UpdateThread)
 	v1.DELETE("/thread/:id", tH.DeleteThread)
+	// v1.GET("/thread/user_ranking", tH.UserOfThreadRanking)
 
 	// thread vote
 	v1.POST("/vote_thread", vtH.IncreaseVoteThread)

@@ -8,4 +8,5 @@ type ThreadRepository interface {
 	UpdateThread(*model.Thread) error
 	FindThreadById(int) (*model.Thread, error)
 	FindAllThread() (*[]*model.Thread, error)
+	// UserOfThreadRanking() (*[]*model.UserRanking, error)
 }
