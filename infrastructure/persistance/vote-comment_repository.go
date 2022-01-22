@@ -20,7 +20,9 @@ func (vcR *voteCommentRepository) IncreaseVoteComment(vote *model.VoteComment) e
 	db := vcR.sh.db
 
 	// user_id,comment_idで検索しcomment_votes tableにレコードが存在するか判定
-	if err := db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).First(&model.VoteComment{}).Error; err == nil {
+	err := db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).
+		First(&model.VoteComment{}).Error
+	if err == nil {
 		return fmt.Errorf("this uid already exists")
 	}
 	//以下のコードはなぜかうまくいかない...
@@ -31,6 +33,12 @@ func (vcR *voteCommentRepository) IncreaseVoteComment(vote *model.VoteComment) e
 	// uidがあるかどうか
 	if vote.UserID == "" {
 		return fmt.Errorf("uid is empty")
+	}
+
+	// comment_idがあるかどうか
+	// commentIDはBindされたときに0になるっぽい
+	if vote.CommentID == 0 {
+		return fmt.Errorf("comment_id is empty")
 	}
 
 	// 投票した user
@@ -82,8 +90,19 @@ func (vcR *voteCommentRepository) RevokeVoteComment(vote *model.VoteComment) err
 	db := vcR.sh.db
 
 	// user_id,comment_idで検索しcomment_votes tableにレコードが存在するか判定
-	if err := db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).First(&model.VoteComment{}).Error; err != nil {
+	err := db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).
+		First(&model.VoteComment{}).Error
+	if err != nil {
 		return err
+	}
+
+	// uidがあるかどうか
+	if vote.UserID == "" {
+		return fmt.Errorf("uid is empty")
+	}
+	// comment_idがあるかどうか
+	if vote.CommentID == 0 {
+		return fmt.Errorf("comment_id is empty")
 	}
 
 	// 投票した user
@@ -139,6 +158,15 @@ func (vcR *voteCommentRepository) RevokeVoteComment(vote *model.VoteComment) err
 func (vcR *voteCommentRepository) FindVoteCommentIdOfVoted(uid string, threadId int) (*[]*model.VoteComment, error) {
 	db := vcR.sh.db
 
+	// uidがあるかどうか
+	if uid == "" {
+		return nil, fmt.Errorf("uid is empty")
+	}
+	// thread_idがあるかどうか
+	if threadId == 0 {
+		return nil, fmt.Errorf("thread_id is empty")
+	}
+
 	thread := &model.Thread{
 		Comments: []*model.Comment{},
 	}
@@ -159,7 +187,9 @@ func (vcR *voteCommentRepository) FindVoteCommentIdOfVoted(uid string, threadId 
 		return vote_comments, nil
 	}
 
-	if err := db.Where("user_id = ? AND comment_id IN (?) ", uid, thread_comment_id).Find(vote_comments).Error; err != nil {
+	err := db.Where("user_id = ? AND comment_id IN (?) ", uid, thread_comment_id).
+		Find(vote_comments).Error
+	if err != nil {
 		return nil, err
 	}
 

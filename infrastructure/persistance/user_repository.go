@@ -16,19 +16,19 @@ func NewUserRepository(sh *SqlHandler) repository.UserRepository {
 }
 
 // user作成
-func (uR *userRepository) CreateUser(user *model.User) (*model.User,error) {
+func (uR *userRepository) CreateUser(user *model.User) (*model.User, error) {
 	db := uR.sh.db
 
 	// uidがあるかどうか
 	if user.Id == "" {
-		return nil,fmt.Errorf("uid is empty")
+		return nil, fmt.Errorf("uid is empty")
 	}
 
 	//存在するか確認
 	// 既に存在する場合　resUserにデータをバインドして返す
 	resUser := &model.User{Id: user.Id}
 	if err := db.First(resUser).Error; err == nil {
-		return resUser,nil
+		return resUser, nil
 	}
 
 	return user, db.Save(user).Error
@@ -83,6 +83,16 @@ func (uR *userRepository) FindAllUser() (*[]*model.User, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+// 上位10名の userを表示 (Scoreを基準とする)
+func (uR *userRepository) GetUserRanking() (*[]*model.User, error) {
+	db := uR.sh.db
+	top_users := &[]*model.User{}
+	if err := db.Limit(2).Order("score desc").Find(top_users).Error; err != nil {
+		return nil, err
+	}
+	return top_users, nil
 }
 
 // [おまけ] すべてのuserを返す(commentまで結合)

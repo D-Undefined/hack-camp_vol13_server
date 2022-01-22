@@ -2,6 +2,7 @@ package persistance
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/D-Undefined/hack-camp_vol13_server/domain/model"
 	"github.com/D-Undefined/hack-camp_vol13_server/usecase/repository"
@@ -16,27 +17,43 @@ func NewThreadRepository(sh *SqlHandler) repository.ThreadRepository {
 }
 
 // Thread作成
-func (tR *threadRepository) CreateThread(thread *model.Thread) error {
+func (tR *threadRepository) CreateThread(thread *model.Thread) (*model.Thread, error) {
 	db := tR.sh.db
 
 	// uidがあるかどうか
 	if thread.UserID == "" {
-		return fmt.Errorf("uid is empty")
+		return nil, fmt.Errorf("uid is empty")
 	}
 
 	// userが存在するか確認
 	user := &model.User{Id: thread.UserID}
 	if err := db.First(user).Error; err != nil {
-		return err
+
+		return nil, err
 	}
 
 	//作成した user の　scoreを30増やす
 	user.Score = user.Score + 30
 	if err := db.Model(&model.User{Id: thread.UserID}).Update(user).Error; err != nil {
-		return err
+		return nil, err
 	}
 
-	return db.Save(thread).Error
+	// thread Save
+	if err := db.Save(thread).Error; err != nil {
+		return nil, err
+	}
+
+	// Saveすることでthreadに id がふられる
+	// それを利用してresponse用のThreadデータ準備
+	resThread := &model.Thread{
+		Id:   thread.Id,
+		User: &model.User{},
+	}
+	if err := db.Preload("User").First(resThread).Error; err != nil {
+		return nil, err
+	}
+
+	return resThread, nil
 }
 
 // Thread削除
@@ -64,25 +81,43 @@ func (tR *threadRepository) DeleteThread(thread *model.Thread) error {
 }
 
 // Thread更新
-func (tR *threadRepository) UpdateThread(thread *model.Thread) error {
+func (tR *threadRepository) UpdateThread(thread *model.Thread) (*model.Thread, error) {
 	db := tR.sh.db
 	//存在するか確認
 	if err := db.First(&model.Thread{Id: thread.Id}).Error; err != nil {
-		return err
+		return nil, err
 	}
 
-	return db.Model(&model.Thread{Id: thread.Id}).Update(thread).Error
+	// 更新
+	if err := db.Model(&model.Thread{Id: thread.Id}).Update(thread).Error; err != nil {
+		return nil, err
+	}
+
+	// response用のThreadデータ準備
+	resThread := &model.Thread{
+		Id:   thread.Id,
+		User: &model.User{},
+	}
+	if err := db.Preload("User").First(resThread).Error; err != nil {
+		return nil, err
+	}
+
+	return resThread, nil
 }
 
 // IDで Threadを検索
 func (tR *threadRepository) FindThreadById(id int) (*model.Thread, error) {
 	db := tR.sh.db
 	thread := &model.Thread{
-		Id:       id,
-		Comments: []*model.Comment{},
+		Id: id,
+		Comments: []*model.Comment{
+			{
+				User: &model.User{},
+			},
+		},
 	}
 
-	err := db.Preload("Comments").First(thread).Error
+	err := db.Preload("Comments.User").First(thread).Error
 	if err != nil {
 		return nil, err
 	}
@@ -98,6 +133,27 @@ func (tR *threadRepository) FindAllThread() (*[]*model.Thread, error) {
 		return nil, err
 	}
 	return threads, nil
+}
+
+// 過去１週間の trendのthreadを 10件返す
+func (tR *threadRepository) FindTrendThread() (*[]*model.Thread, error) {
+	var now, lastWeek time.Time
+
+	db := tR.sh.db
+	trend_thread := &[]*model.Thread{}
+
+	// test してないので 正しく動くか不安
+	now = time.Now()
+	lastWeek = now.AddDate(0, 0, -7)
+
+	if err := db.Where("created_at BETWEEN ? AND ?", lastWeek, now).
+		Limit(10).
+		Order("vote_cnt desc").
+		Find(trend_thread).Error; err != nil {
+		return nil, err
+	}
+
+	return trend_thread, nil
 }
 
 // Thread(VoteCnt)の user ランキング

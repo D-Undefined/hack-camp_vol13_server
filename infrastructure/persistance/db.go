@@ -21,7 +21,7 @@ func NewDB() *SqlHandler {
 	if os.Getenv("APP_MODE") == "production" {
 		// 本番環境
 		connectionString = os.Getenv("DATABASE_URL")
-		} else {
+	} else {
 		// 開発環境
 		connectionString = fmt.Sprintf(
 			"postgres://%s:%s@db:%s/%s?sslmode=disable",
@@ -31,7 +31,6 @@ func NewDB() *SqlHandler {
 			os.Getenv("POSTGRES_DB"),
 		)
 	}
-
 
 	// 稼働待ち
 	for i := 0; i < 10; i++ {

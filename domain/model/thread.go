@@ -10,7 +10,8 @@ type Thread struct {
 	VoteCnt    int           `json:"vote_cnt"`
 	Vote       []*VoteThread `gorm:"constraint:OnDelete:CASCADE"`
 	UserID     string        `gorm:"not null" json:"uid"`
-	CreatedAt  time.Time     `json:"created_at"`
-	CommentCnt int           `json:"comment_cnt"`
+	User       *User
+	CreatedAt  time.Time `json:"created_at"`
+	CommentCnt int       `json:"comment_cnt"`
 	Comments   []*Comment
 }

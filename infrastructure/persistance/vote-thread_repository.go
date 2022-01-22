@@ -21,7 +21,9 @@ func (vtR *voteThreadRepository) IncreaseVoteThread(vote *model.VoteThread) erro
 
 	// user_id,thread_idで検索し
 	// thread_votes tableにレコードが存在するか判定
-	if err := db.Where("user_id = ? AND thread_id = ?", vote.UserID, vote.ThreadID).First(&model.VoteThread{}).Error; err == nil {
+	err := db.Where("user_id = ? AND thread_id = ?", vote.UserID, vote.ThreadID).
+		First(&model.VoteThread{}).Error
+	if err == nil {
 		return fmt.Errorf("this uid and thread_id already exists")
 	}
 
@@ -80,8 +82,16 @@ func (vtR *voteThreadRepository) RevokeVoteThread(vote *model.VoteThread) error 
 
 	// user_id,thread_idで検索し
 	// thread_votes tableにレコードが存在するか判定
-	if err := db.Where("user_id = ? AND thread_id = ?", vote.UserID, vote.ThreadID).First(&model.VoteThread{}).Error; err != nil {
+
+	err := db.Where("user_id = ? AND thread_id = ?", vote.UserID, vote.ThreadID).
+		First(&model.VoteThread{}).Error
+	if err != nil {
 		return err
+	}
+
+	// uidがあるかどうか
+	if vote.UserID == "" {
+		return fmt.Errorf("uid is empty")
 	}
 
 	// 投票した user
@@ -131,6 +141,15 @@ func (vtR *voteThreadRepository) RevokeVoteThread(vote *model.VoteThread) error 
 // good/bad済みか
 func (vtR *voteThreadRepository) CheckVoteThread(uid string, threadId int) (*model.VoteThread, error) {
 	db := vtR.sh.db
+
+	// uidがあるかどうか
+	if uid == "" {
+		return nil, fmt.Errorf("uid is empty")
+	}
+	// thread_idがあるかどうか
+	if threadId == 0 {
+		return nil, fmt.Errorf("thread_id is empty")
+	}
 
 	vote_thread := &model.VoteThread{}
 	if err := db.Where(&model.VoteThread{ThreadID: threadId, UserID: uid}).Find(vote_thread).Error; err != nil {
