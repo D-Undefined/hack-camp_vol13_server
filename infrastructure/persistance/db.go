@@ -16,19 +16,28 @@ type SqlHandler struct {
 
 // db接続とモデルのmigrate
 func NewDB() *SqlHandler {
-	connectionString := fmt.Sprintf(
-		"postgres://%s:%s@db:%s/%s?sslmode=disable",
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"),
-		"5432",
-		os.Getenv("POSTGRES_DB"),
-	)
+	var connectionString string
+
+	if os.Getenv("APP_MODE") == "production" {
+		// 本番環境
+		connectionString = os.Getenv("DATABASE_URL")
+		} else {
+		// 開発環境
+		connectionString = fmt.Sprintf(
+			"postgres://%s:%s@db:%s/%s?sslmode=require",
+			os.Getenv("POSTGRES_USER"),
+			os.Getenv("POSTGRES_PASSWORD"),
+			"5432",
+			os.Getenv("POSTGRES_DB"),
+		)
+	}
+
 
 	// 稼働待ち
 	for i := 0; i < 10; i++ {
 		_, err := gorm.Open("postgres", connectionString)
 		if err == nil {
-			fmt.Printf("### connect.\n")
+			fmt.Printf(os.Getenv("DATABASE_URL") + "### connect.\n")
 			break
 		}
 		fmt.Printf("### failed to connect database. connect again.\n")

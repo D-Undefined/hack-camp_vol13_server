@@ -1,0 +1,5 @@
+build:
+  docker:
+    web: ./docker/golang/Dockerfile
+run:
+  web: /go/src/github.com/D-Undefined/hack-camp_vol13_server/main
