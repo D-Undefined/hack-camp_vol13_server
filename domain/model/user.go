@@ -9,8 +9,8 @@ type User struct {
 	Twitter  string     `json:"twitter"`
 	Github   string     `json:"github"`
 	Url      string     `json:"url"`
-	Follow   int        `json:"follow"`
-	Follower int        `json:"follower"`
+	// Follow   int        `json:"follow"`
+	// Follower int        `json:"follower"`
 	Belong   string     `json:"belong"`
 	Score    int        `json:"score"`
 	Threads  []*Thread  `gorm:"constraint:OnDelete:CASCADE"`
