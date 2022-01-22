@@ -17,27 +17,43 @@ func NewThreadRepository(sh *SqlHandler) repository.ThreadRepository {
 }
 
 // Thread作成
-func (tR *threadRepository) CreateThread(thread *model.Thread) error {
+func (tR *threadRepository) CreateThread(thread *model.Thread) (*model.Thread, error) {
 	db := tR.sh.db
 
 	// uidがあるかどうか
 	if thread.UserID == "" {
-		return fmt.Errorf("uid is empty")
+		return nil, fmt.Errorf("uid is empty")
 	}
 
 	// userが存在するか確認
 	user := &model.User{Id: thread.UserID}
 	if err := db.First(user).Error; err != nil {
-		return err
+
+		return nil, err
 	}
 
 	//作成した user の　scoreを30増やす
 	user.Score = user.Score + 30
 	if err := db.Model(&model.User{Id: thread.UserID}).Update(user).Error; err != nil {
-		return err
+		return nil, err
 	}
 
-	return db.Save(thread).Error
+	// thread Save
+	if err := db.Save(thread).Error; err != nil {
+		return nil, err
+	}
+
+	// Saveすることでthreadに id がふられる
+	// それを利用してresponse用のThreadデータ準備
+	resThread := &model.Thread{
+		Id:   thread.Id,
+		User: &model.User{},
+	}
+	if err := db.Preload("User").First(resThread).Error; err != nil {
+		return nil, err
+	}
+
+	return resThread, nil
 }
 
 // Thread削除
@@ -65,14 +81,28 @@ func (tR *threadRepository) DeleteThread(thread *model.Thread) error {
 }
 
 // Thread更新
-func (tR *threadRepository) UpdateThread(thread *model.Thread) error {
+func (tR *threadRepository) UpdateThread(thread *model.Thread) (*model.Thread, error) {
 	db := tR.sh.db
 	//存在するか確認
 	if err := db.First(&model.Thread{Id: thread.Id}).Error; err != nil {
-		return err
+		return nil, err
 	}
 
-	return db.Model(&model.Thread{Id: thread.Id}).Update(thread).Error
+	// 更新
+	if err := db.Model(&model.Thread{Id: thread.Id}).Update(thread).Error; err != nil {
+		return nil, err
+	}
+
+	// response用のThreadデータ準備
+	resThread := &model.Thread{
+		Id:   thread.Id,
+		User: &model.User{},
+	}
+	if err := db.Preload("User").First(resThread).Error; err != nil {
+		return nil, err
+	}
+
+	return resThread, nil
 }
 
 // IDで Threadを検索
