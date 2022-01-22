@@ -32,14 +32,24 @@ func (vcR *voteCommentRepository) IncreaseVoteComment(vote *model.VoteComment) e
 	if vote.UserID == "" {
 		return fmt.Errorf("uid is empty")
 	}
+
+	// 投票した user
+	vote_user := &model.User{Id: vote.UserID}
 	//存在するか確認
-	if err := db.First(&model.User{Id: vote.UserID}).Error; err != nil {
+	if err := db.First(vote_user).Error; err != nil {
 		return err
 	}
 
 	// DBからIDで検索し、commentにbind
 	comment := &model.Comment{Id: vote.CommentID}
 	if err := db.First(comment).Error; err != nil {
+		return err
+	}
+
+	// 投票されたコメントを作成した user
+	wasVoted_user := &model.User{Id: comment.UserID}
+	//存在するか確認
+	if err := db.First(wasVoted_user).Error; err != nil {
 		return err
 	}
 
@@ -52,6 +62,18 @@ func (vcR *voteCommentRepository) IncreaseVoteComment(vote *model.VoteComment) e
 	if err := db.Model(&model.Comment{Id: vote.CommentID}).Update(comment).Error; err != nil {
 		return err
 	}
+
+	// userのスコアも更新
+	vote_user.Score = vote_user.Score + 1
+	if err := db.Model(&model.User{Id: vote.UserID}).Update(vote_user).Error; err != nil {
+		return err
+	}
+
+	wasVoted_user.Score = wasVoted_user.Score + 2
+	if err := db.Model(&model.User{Id: comment.UserID}).Update(wasVoted_user).Error; err != nil {
+		return err
+	}
+
 	return db.Save(vote).Error
 }
 
@@ -64,9 +86,23 @@ func (vcR *voteCommentRepository) RevokeVoteComment(vote *model.VoteComment) err
 		return err
 	}
 
+	// 投票した user
+	vote_user := &model.User{Id: vote.UserID}
+	//存在するか確認
+	if err := db.First(vote_user).Error; err != nil {
+		return err
+	}
+
 	// DBからIDで検索し、commentにbind
 	comment := &model.Comment{Id: vote.CommentID}
 	if err := db.First(comment).Error; err != nil {
+		return err
+	}
+
+	// 投票されたコメントを作成した user
+	wasVoted_user := &model.User{Id: comment.UserID}
+	//存在するか確認
+	if err := db.First(wasVoted_user).Error; err != nil {
 		return err
 	}
 
@@ -83,6 +119,17 @@ func (vcR *voteCommentRepository) RevokeVoteComment(vote *model.VoteComment) err
 	//下記のコードだと想定外のdeleteを行っている
 	//おそらく 条件を user_id or commnet_idで削除してるのかな...
 	// return db.Delete(vote).Error
+
+	// userのスコアも更新 (元に戻す)
+	vote_user.Score = vote_user.Score - 1
+	if err := db.Model(&model.User{Id: vote.UserID}).Update(vote_user).Error; err != nil {
+		return err
+	}
+
+	wasVoted_user.Score = wasVoted_user.Score - 2
+	if err := db.Model(&model.User{Id: comment.UserID}).Update(wasVoted_user).Error; err != nil {
+		return err
+	}
 
 	return db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).Delete(&model.VoteComment{}).Error
 }
@@ -104,8 +151,6 @@ func (vcR *voteCommentRepository) FindVoteCommentIdOfVoted(uid string, threadId 
 	for i := 0; i < len(thread.Comments); i++ {
 		thread_comment_id = append(thread_comment_id, thread.Comments[i].Id)
 	}
-
-	fmt.Printf("### %v\n", thread_comment_id)
 
 	vote_comments := &[]*model.VoteComment{}
 
