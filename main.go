@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/D-Undefined/hack-camp_vol13_server/infrastructure/api/handler"
 	"github.com/D-Undefined/hack-camp_vol13_server/infrastructure/persistance"
@@ -61,7 +62,7 @@ func main() {
 	v1.POST("/comment_vote", vcH.IncreaseCommentVote)
 	v1.DELETE("/comment_vote", vcH.RevokeCommentVote)
 
-	server.Run(":8080")
+	server.Run(":" + os.Getenv("PORT"))
 }
 
 func health(ctx *gin.Context) {
