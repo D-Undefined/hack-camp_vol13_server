@@ -60,6 +60,7 @@ func main() {
 	// comment vote
 	v1.POST("/vote_comment", vcH.IncreaseVoteComment)
 	v1.DELETE("/vote_comment", vcH.RevokeVoteComment)
+	v1.GET("/vote_comment/:uid/:thread_id", vcH.FindVoteCommentIdOfVoted)
 
 	server.Run(":8080")
 }

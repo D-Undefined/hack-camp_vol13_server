@@ -87,9 +87,37 @@ func (vcR *voteCommentRepository) RevokeVoteComment(vote *model.VoteComment) err
 	return db.Where("user_id = ? AND comment_id = ?", vote.UserID, vote.CommentID).Delete(&model.VoteComment{}).Error
 }
 
-// // good/bad済みか
-// // もしすでにしてるものがあればそのcomment_idを返す
-// func (vcR *voteCommentRepository) FindVoteCommentIdOfVoted(uid string,thread_id int) (*[]int,error){
-// 	thread := &model.Thread{}
+// good/bad済みか
+// もしすでにしてるものがあればそのcomment_idを返す
+func (vcR *voteCommentRepository) FindVoteCommentIdOfVoted(uid string, threadId int) (*[]*model.VoteComment, error) {
+	db := vcR.sh.db
 
-// }
+	thread := &model.Thread{
+		Comments: []*model.Comment{},
+	}
+	if err := db.Where(&model.Thread{Id: threadId}).Preload("Comments").Find(thread).Error; err != nil {
+		return nil, err
+	}
+
+	// もっといい書き方があるかも
+	thread_comment_id := []int{}
+	for i := 0; i < len(thread.Comments); i++ {
+		thread_comment_id = append(thread_comment_id, thread.Comments[i].Id)
+	}
+
+	fmt.Printf("### %v\n", thread_comment_id)
+
+	vote_comments := &[]*model.VoteComment{}
+
+	// 存在しなければ空の配列を返す
+	if len(thread_comment_id) == 0 {
+		return vote_comments, nil
+	}
+
+	if err := db.Where("user_id = ? AND comment_id IN (?) ", uid, thread_comment_id).Find(vote_comments).Error; err != nil {
+		return nil, err
+	}
+
+	return vote_comments, nil
+
+}
