@@ -52,6 +52,7 @@ func main() {
 	// thread vote
 	v1.POST("/vote_thread", vtH.IncreaseVoteThread)
 	v1.DELETE("/vote_thread", vtH.RevokeVoteThread)
+	v1.GET("/vote_thread/:uid/:thread_id", vtH.CheckVoteThread)
 
 	// comment
 	v1.POST("/comment", cH.CreateComment)

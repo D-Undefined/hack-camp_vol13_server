@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/D-Undefined/hack-camp_vol13_server/domain/model"
 	"github.com/D-Undefined/hack-camp_vol13_server/usecase/repository"
@@ -15,6 +16,7 @@ type voteThreadHandler struct {
 type VoteThreadHandler interface {
 	IncreaseVoteThread(*gin.Context)
 	RevokeVoteThread(*gin.Context)
+	CheckVoteThread(*gin.Context)
 }
 
 func NewVoteThreadHandler(vtR repository.VoteThreadRepository) VoteThreadHandler {
@@ -47,4 +49,23 @@ func (vtH *voteThreadHandler) RevokeVoteThread(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "ok"})
+}
+
+// good/bad 済みか
+func (vtH *voteThreadHandler) CheckVoteThread(ctx *gin.Context) {
+	uid := ctx.Param("uid")
+
+	threadIdString := ctx.Param("thread_id")
+	threadId, err := strconv.Atoi(threadIdString)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
+		return
+	}
+
+	vote_thread, err := vtH.vtR.CheckVoteThread(uid, threadId)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, model.ResponseError{Message: err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, vote_thread)
 }

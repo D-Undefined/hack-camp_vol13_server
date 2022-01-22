@@ -80,3 +80,14 @@ func (vtR *voteThreadRepository) RevokeVoteThread(vote *model.VoteThread) error 
 
 	return db.Where("user_id = ? AND thread_id = ?", vote.UserID, vote.ThreadID).Delete(&model.VoteThread{}).Error
 }
+
+// good/bad済みか
+func (vtR *voteThreadRepository) CheckVoteThread(uid string, threadId int) (*model.VoteThread, error) {
+	db := vtR.sh.db
+
+	vote_thread := &model.VoteThread{}
+	if err := db.Where(&model.VoteThread{ThreadID: threadId, UserID: uid}).Find(vote_thread).Error; err != nil {
+		return nil, err
+	}
+	return vote_thread, nil
+}
